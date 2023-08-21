@@ -1,12 +1,12 @@
 <template>
-    <div class="flex w-full h-auto cursor-pointer hover:bg-lowWhite ">
+    <div v-for="tweet in tweetss.data" :key="tweet.id" class="flex w-full h-auto cursor-pointer hover:bg-lowWhite ">
         <div class="p-3">
-            <img src="/images/laravel.png" class="w-[45px] rounded-full" alt="post profil image">
+            <img :src="tweet.user.profile_photo_path" class="w-[45px] rounded-full" :alt="tweet.user.name" />
         </div>
         <div class="w-full">
             <div class="text-sm px-2 flex  items-center justify-start gap-2 text-normalWhite mt-2">
-                <h3 class="font-bold hover:underline">Laravel</h3>
-                <span class="text-lowsWhite font-light flex-grow">@laravel · Aug 14</span>
+                <h3 class="font-bold hover:underline"><a :href="tweet.user.name">{{ tweet.user.name }}</a></h3>
+                <span class="text-lowsWhite font-light flex-grow"><a :href="tweet.user.username">@{{ tweet.user.username }}</a> · {{ formatDateString(tweet.created_at) }}</span>
                 <span>
                 <svg viewBox="0 0 24 24"
                      class="w-[30px] cursor-pointer rounded-full p-2 fill-lowsWhite  hover:fill-tickBlue  hover:bg-hoverBlue z-100 transition duration-200"
@@ -18,17 +18,7 @@
             </span>
             </div>
             <div class="text-sm text-normalWhite">
-                Laravel is a web application framework with expressive, elegant syntax. A web framework provides a structure and starting point for creating your application, allowing you to focus on creating something amazing while we sweat the details.
-
-                <br/>
-                Laravel strives to provide an amazing developer experience while providing powerful features such as thorough dependency injection, an expressive database abstraction layer, queues and scheduled jobs, unit and integration testing, and more.
-
-                <br/>
-
-                Whether you are new to PHP web frameworks or have years of experience, Laravel is a framework that can grow with you. We'll help you take your first steps as a web developer or give you a boost as you take your expertise to the next level. We can't wait to see what you build.
-                <br/>
-                
-                <a href="https://laravel.com" style="color:#1d9bf0;">https://laravel.com</a>
+                {{ tweet.content }}
             </div>
             <div class="pr-3 mt-2">
                 <img src="/images/laravel.png" class="object-cover border-[1px] border-lowsWhite rounded-lg"
@@ -90,4 +80,85 @@
 </template>
 
 <script setup>
+import { format } from 'date-fns'
+import { onMounted } from 'vue';
+import { router } from '@inertiajs/vue3'
+
+    const props = defineProps({
+        tweets: Object,
+    })
+
+    const tweets = props.tweets
+
+    const tweetss = tweets;
+
+    const formatDateString = (dateString) => {
+    return format(new Date(dateString), 'MMM d')
+    }
+
+    // onMounted(() => {
+    //     window.addEventListener('scroll', e => {
+    //         let pixelsFromButton = document.documentElement.offsetHeight - document.documentElement.scrollTop - window.innerHeight;
+
+    //         if(pixelsFromButton > 200) {
+    //             router.get(tweets.next_page_url, {}, {
+    //                 preserveScroll : true,
+    //                 preserveState : true,
+    //                 onStart : page => {
+    //                     tweets = {
+    //                         ...page.tweets,
+    //                         data : [...tweets.data, ...page.tweet.data]
+    //                     }
+    //                 }
+    //             });
+    //         }
+    //     });
+    // });
+
+
+    onMounted(() => {
+  window.addEventListener('scroll', debounce((e)) => {
+    let pixelsFromButton = document.documentElement.offsetHeight - document.documentElement.scrollTop - window.innerHeight;
+
+    if (pixelsFromButton > 200) {
+      if (tweetss.next_page_url) {
+        router.get(tweets.next_page_url, {}, {
+          preserveScroll: true,
+          preserveState: true,
+        }).then(page => {
+            tweetss = {
+            ...page.tweets,
+            data: [...tweetss.data, ...page.tweets.data],
+          };
+        });
+      }
+    }
+  });
+});
+
+
+
+onMounted(() => {
+  window.addEventListener('scroll', debounce(() => {
+    let pixelsFromButton = document.documentElement.offsetHeight - document.documentElement.scrollTop - window.innerHeight;
+
+    if (pixelsFromButton > 200) {
+      if (tweetss.next_page_url) {
+        router.get(tweetss.next_page_url, {}, {
+          preserveScroll: true,
+          preserveState: true,
+        })
+        .then(page => {
+          tweets = {
+            ...page.tweets,
+            data: [...tweets.data, ...page.tweets.data],
+          };
+        })
+        .catch(error => {
+          console.error("Hata oluştu:", error);
+        });
+      }
+    }
+  }));
+});
 </script>

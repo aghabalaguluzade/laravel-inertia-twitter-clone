@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\UserTweetsController;
+use App\Models\Tweet;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -15,9 +17,25 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    // return view('welcome');
-    return Inertia::render('UserTweets');
+// Route::get('/', function () {
+//     // return view('welcome');
+//     $users = User::all();
+//     return Inertia::render('UserTweets', [
+//             'users' => $users,
+//             'tweets' => $users->tweets()->paginate()
+//         ]);
+// });
+
+Route::get('/', function () { 
+    $tweets = Tweet::with('user')->inRandomOrder()->paginate(10);
+
+    if(request()->wantsJson()){
+        return $tweets;
+    };
+
+    return Inertia::render('index', [
+        'tweets' => $tweets
+    ]);
 });
 
 Route::get('/users/{user}', [UserTweetsController::class, 'index']);
