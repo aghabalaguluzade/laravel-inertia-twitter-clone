@@ -1,5 +1,5 @@
 <template>
-    <div v-for="tweet in tweetss.data" :key="tweet.id" class="flex w-full h-auto cursor-pointer hover:bg-lowWhite ">
+    <div v-for="tweet in tweets.data" :key="tweet.id" class="flex w-full h-auto cursor-pointer hover:bg-lowWhite ">
         <div class="p-3">
             <img :src="tweet.user.profile_photo_path" class="w-[45px] rounded-full" :alt="tweet.user.name" />
         </div>
@@ -79,86 +79,39 @@
     </div>
 </template>
 
+
+
 <script setup>
-import { format } from 'date-fns'
-import { onMounted } from 'vue';
-import { router } from '@inertiajs/vue3'
+    import { defineProps, onMounted, ref } from 'vue';
+    import { format } from 'date-fns';
+    import axios from 'axios';
+    import debounce from 'lodash/debounce';
 
     const props = defineProps({
         tweets: Object,
     })
 
-    const tweets = props.tweets
-
-    const tweetss = tweets;
+    const tweets = ref(props.tweets);
 
     const formatDateString = (dateString) => {
-    return format(new Date(dateString), 'MMM d')
+        return format(new Date(dateString), 'MMM d')
     }
-
-    // onMounted(() => {
-    //     window.addEventListener('scroll', e => {
-    //         let pixelsFromButton = document.documentElement.offsetHeight - document.documentElement.scrollTop - window.innerHeight;
-
-    //         if(pixelsFromButton > 200) {
-    //             router.get(tweets.next_page_url, {}, {
-    //                 preserveScroll : true,
-    //                 preserveState : true,
-    //                 onStart : page => {
-    //                     tweets = {
-    //                         ...page.tweets,
-    //                         data : [...tweets.data, ...page.tweet.data]
-    //                     }
-    //                 }
-    //             });
-    //         }
-    //     });
-    // });
-
 
     onMounted(() => {
-  window.addEventListener('scroll', debounce((e)) => {
-    let pixelsFromButton = document.documentElement.offsetHeight - document.documentElement.scrollTop - window.innerHeight;
+        window.addEventListener('scroll', debounce((e) => {
+            let pixelsFromButton = document.documentElement.offsetHeight - document.documentElement.scrollTop - window.innerHeight;
 
-    if (pixelsFromButton > 200) {
-      if (tweetss.next_page_url) {
-        router.get(tweets.next_page_url, {}, {
-          preserveScroll: true,
-          preserveState: true,
-        }).then(page => {
-            tweetss = {
-            ...page.tweets,
-            data: [...tweetss.data, ...page.tweets.data],
-          };
-        });
-      }
-    }
-  });
-});
+            if (pixelsFromButton < 200) {
+                console.log(pixelsFromButton);
 
+                axios.get(tweets.value.next_page_url).then(response => {
+                    tweets.value = {
+                        ...response.data,
+                        data: [...tweets.value.data, ...response.data.data]
+                    }
+                })
+            }
+        }, 100))
+    });
 
-
-onMounted(() => {
-  window.addEventListener('scroll', debounce(() => {
-    let pixelsFromButton = document.documentElement.offsetHeight - document.documentElement.scrollTop - window.innerHeight;
-
-    if (pixelsFromButton > 200) {
-      if (tweetss.next_page_url) {
-        router.get(tweetss.next_page_url, {}, {
-          preserveScroll: true,
-          preserveState: true,
-        })
-        .then(page => {
-          tweets = {
-            ...page.tweets,
-            data: [...tweets.data, ...page.tweets.data],
-          };
-        })
-        .catch(error => {
-          console.error("Hata oluştu:", error);
-        });
-      }
-    }
-  }));
-});
 </script>
