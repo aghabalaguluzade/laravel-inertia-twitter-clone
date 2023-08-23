@@ -5,8 +5,8 @@
         </div>
         <div class="w-full">
             <div class="text-sm px-2 flex  items-center justify-start gap-2 text-normalWhite mt-2">
-                <h3 class="font-bold hover:underline"><a :href="tweet.user.name">{{ tweet.user.name }}</a></h3>
-                <span class="text-lowsWhite font-light flex-grow"><a :href="tweet.user.username">@{{ tweet.user.username }}</a> · {{ formatDateString(tweet.created_at) }}</span>
+                <h3 class="font-bold hover:underline"><a :href="userPageUrl(tweet.user.username)">{{ tweet.user.name }}</a></h3>
+                <span class="text-lowsWhite font-light flex-grow"><a :href="userPageUrl(tweet.user.username)">@{{ tweet.user.username }}</a> · {{ formatDateString(tweet.created_at) }}</span>
                 <span>
                 <svg viewBox="0 0 24 24"
                      class="w-[30px] cursor-pointer rounded-full p-2 fill-lowsWhite  hover:fill-tickBlue  hover:bg-hoverBlue z-100 transition duration-200"
@@ -21,8 +21,8 @@
                 {{ tweet.content }}
             </div>
             <div class="pr-3 mt-2">
-                <img src="/images/laravel.png" class="object-cover border-[1px] border-lowsWhite rounded-lg"
-                     alt="post image">
+                <!-- <img src="/images/laravel.png" class="object-cover border-[1px] border-lowsWhite rounded-lg"
+                     alt="post image"> -->
             </div>
             <ul class="flex items-center w-full justify-start gap-10 py-3">
                 <li class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
@@ -77,12 +77,15 @@
             </ul>
         </div>
     </div>
+    <div v-if="tweets.next_page_url" ref="scrollIndicator" class="text-center text-gray-400 my-4">
+        Yüklənir...
+    </div>
 </template>
 
 
 
 <script setup>
-    import { defineProps, onMounted, ref } from 'vue';
+    import { defineProps, onMounted, onUnmounted, ref } from 'vue';
     import { format } from 'date-fns';
     import axios from 'axios';
     import debounce from 'lodash/debounce';
@@ -97,21 +100,35 @@
         return format(new Date(dateString), 'MMM d')
     }
 
+    const loadMoreTweets = () => {
+            axios.get(tweets.value.next_page_url).then((response) => {
+                tweets.value = {
+                    ...response.data,
+                    data: [...tweets.value.data, ...response.data.data],
+                };
+            });
+    };
+
     onMounted(() => {
-        window.addEventListener('scroll', debounce((e) => {
-            let pixelsFromButton = document.documentElement.offsetHeight - document.documentElement.scrollTop - window.innerHeight;
+        const handleScroll = debounce(() => {
+            const pixelsFromBottom = document.documentElement.offsetHeight - document.documentElement.scrollTop - window.innerHeight;
 
-            if (pixelsFromButton < 200) {
-                console.log(pixelsFromButton);
-
-                axios.get(tweets.value.next_page_url).then(response => {
-                    tweets.value = {
-                        ...response.data,
-                        data: [...tweets.value.data, ...response.data.data]
-                    }
-                })
+            if (pixelsFromBottom < 200) {
+                loadMoreTweets();
             }
-        }, 100))
+        }, 100);
+
+        window.addEventListener('scroll', handleScroll);
+
+        onUnmounted(() => {
+            window.removeEventListener('scroll', handleScroll);
+        });
     });
+
+
+    const userPageUrl = (user) => {
+        return `/${user}`;
+    };
+
 
 </script>

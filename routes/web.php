@@ -23,5 +23,7 @@ use Illuminate\Support\Facades\Route;
 //             'tweets' => $users->tweets()->paginate()
 //         ]);
 // });
+    
 
 Route::get('/', [TweetsController::class, 'index']);
+Route::get('/{user:username}', [TweetsController::class, 'users']);

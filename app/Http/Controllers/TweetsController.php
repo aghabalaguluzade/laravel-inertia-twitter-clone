@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tweet;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class TweetsController extends Controller
 {
     public function index(Request $request) {
-        $tweets = Tweet::with('user')->inRandomOrder()->paginate();
+        
+        $tweets = Tweet::with('user')->latest()->paginate();
 
         if($request->wantsJson()){
             return $tweets;
@@ -19,4 +21,19 @@ class TweetsController extends Controller
             'tweets' => $tweets
         ]);
     }
+
+    public function users(Request $request, User $user) {
+
+        $tweets = $user->tweets()->with('user')->latest()->paginate();
+
+        if($request->wantsJson()){
+            return $tweets;
+        };
+
+        return Inertia::render('users', [
+            'user' => $user,
+            'tweets' => $tweets
+        ]);
+    }
+    
 }
