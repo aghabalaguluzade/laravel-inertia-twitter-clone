@@ -89,12 +89,12 @@
              class="relative flex items-center group px-3 transition duration-200 cursor-pointer hover:bg-lowWhite rounded-full bottom-2 2xl:left-4 xl:left-4 py-2 2xl:w-11/12 xl:w-11/12 lg:w-16 lg:h-16 sm:h-16 sm:w-16 focus:pointer-events-none ">
             <div class="flex items-center gap-3 w-full">
                 <div class="flex items-center justify-center">
-                <img class="rounded-full w-9 object-cover " src="/images/profile.jpg"
+                <img class="rounded-full w-9 object-cover " :src="user.profile_photo_path"
                      alt="profile image">
                 </div>
                 <div class="flex flex-col flex-grow items-center 2xl:block xl:block lg:hidden sm:hidden">
-                    <span class="text-normalWhite text-sm font-semibold block">Aghabala Guluzade</span>
-                    <span class="text-lowsWhite font-light text-sm block">@aghabalaguluzade</span>
+                    <span class="text-normalWhite text-sm font-semibold block">{{ user.name }}</span>
+                    <span class="text-lowsWhite font-light text-sm block">@{{ user.username }}</span>
                 </div>
                 <div class="mr-1 2xl:block xl:block lg:hidden sm:hidden">
                     <svg viewBox="0 0 24 24" class="w-[15px] fill-normalWhite" aria-hidden="true">
@@ -105,10 +105,7 @@
                 </div>
                 <div class="absolute right-2 opacity-0 shadow-[rgba(222,222,222,0.6)] shadow-[0_0_7px_0] text-normalWhite py-3 rounded-xl text-sm w-56 bg-black z-100 pointer-events-none group-focus:opacity-100 group-focus:pointer-events-auto bottom-16 ">
                     <div class="relative  flex flex-col py-2 border-t-[0.5px] border-[rgba(222,222,222,0.4)]">
-                        <a class="py-2 px-2 cursor-pointer w-full hover:bg-useGray transition duration-200">Add an
-                            existing account</a>
-                        <a class="py-2 px-2 w-full hover:bg-useGray cursor-pointer transition duration-200">Log out
-                            @aghabalaguluzade</a>
+                        <a @click="logout" class="py-2 px-2 cursor-pointer w-full hover:bg-useGray transition duration-200">Log out @{{ user.username }}</a>
                     </div>
                 </div>
             </div>
@@ -116,7 +113,18 @@
     </aside>
 </template>
 
+
 <script setup>
-import {Link} from "@inertiajs/vue3";
+    import {Link, router} from "@inertiajs/vue3";
+    import { usePage } from "@inertiajs/vue3";
+    import { computed } from "vue";
+
+    const page = usePage()
+
+    const user = computed(() => page.props.auth.user)
+
+    const logout = () => {
+        router.post('/logout');
+    };
 
 </script>

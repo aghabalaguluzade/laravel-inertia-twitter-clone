@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\TweetsController;
 
 use Illuminate\Support\Facades\Route;
@@ -15,15 +16,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     // return view('welcome');
-//     $users = User::all();
-//     return Inertia::render('UserTweets', [
-//             'users' => $users,
-//             'tweets' => $users->tweets()->paginate()
-//         ]);
-// });
-    
+Route::post('logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
+Route::get('login', [LoginController::class, 'create'])->name('login');
+Route::post('login', [LoginController::class, 'store']);
 
-Route::get('/', [TweetsController::class, 'index']);
-Route::get('/{user:username}', [TweetsController::class, 'users']);
+
+Route::middleware('auth')->group(function () {
+    Route::get('/', [TweetsController::class, 'index']);
+    Route::get('/profile', [LoginController::class, 'profile']);
+    Route::get('/{user:username}', [TweetsController::class, 'users']);
+});
