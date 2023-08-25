@@ -45,9 +45,9 @@
                     </span>
                     17
                 </li>
-                <li class="flex items-center gap-1 group text-sm text-lowsWhite transition duration-200 fill-lowsWhite hover:fill-myPink hover:text-myPink cursor-pointer">
-                    <Link preserve-scroll method="POST" as="button" :href="`/tweets/${tweet.id}/like`">
-                        <TwitLike :name="tweet.liked ? 'heart' : 'heart-outline' "></TwitLike>
+                <li class="flex items-center gap-1 group text-sm text-lowsWhite transition duration-200 fill-lowsWhite  hover:fill-myPink hover:text-myPink cursor-pointer" :class="{ 'fill-myPink' : tweet.liked  }">
+                    <Link preserve-scroll method="POST" as="button" :href="`/tweets/${tweet.id}/like`"> 
+                        <TwitLike></TwitLike>
                     </Link>   
                     {{ tweet.likes_count }}
                 </li>                    
@@ -125,10 +125,6 @@
     const userPageUrl = (user) => {
         return `/${user}`;
     };
-
-    // watch(tweets, (newTweets) => {
-    //     tweets.value = newTweets;
-    // });
 
 
     watch(() => props.tweets, (newTweets) => {

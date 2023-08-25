@@ -41,9 +41,9 @@
         <TwitPost :tweets="tweets" />
     </div>
     <aside class="2xl:w-5/12 xl:w-5/12 lg:w-5/12 sm:w-5/12 min-h-screen border-l-[0.5px] border-useGray relative flex flex-col justify-start gap-2 items-center px-5">
-        <!-- <TwitSearch />
+        <TwitSearch />
         <WhoToFollow />
-        <TrendsForYou /> -->
+        <TrendsForYou />
         <div class="flex flex-col text-lowsWhite text-[12px] w-full px-4 mt-1">
             <div class="flex gap-2">
                 <span class="hover:underline cursor-pointer">Terms of Service</span>

@@ -1,7 +1,7 @@
 <template>
     <div class="flex w-full items-start gap-2 px-4 py-1 border-b-[0.5px] border-lowWhite h-auto">
         <Link href="/" class="cursor-pointer py-1 h-auto">
-            <img src="/images/profile.jpg" class="w-[43px] rounded-full hover:brightness-90" alt="">
+            <img :src="user.profile_photo_path" class="w-[43px] rounded-full hover:brightness-90" alt="">
         </Link>
         <div class="w-full flex flex-col group py-1 items-start ">
             <button class="hover:bg-hoverGreen relative group  group-focus-within:flex cursor-pointer  transition duration-200 hidden gap-2 items-center text-useGreen text-[12px]  ml-2 py-[1px] px-[12px] rounded-l-full rounded-r-full border-[1px] border-lowsWhite ">
@@ -142,17 +142,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import {Link} from "@inertiajs/vue3";
+    import { computed } from "vue";
+    import { usePage } from "@inertiajs/vue3";
 
+    const page = usePage();
 
-// const input = ref(null)
+    const user = computed(() => page.props.auth.user);
 
-// const isFill = computed(() => {
-//     if (input.value !== null) {
-//         return 'text-normalWhite bg-useGreen text-sm font-bold rounded-l-full rounded-r-full py-[6px] px-3'
-//     } else {
-//         return 'text-normalWhite bg-useGreen text-sm font-bold rounded-l-full rounded-r-full py-[6px] px-3 brightness-50'
-//     }
-// })
 </script>

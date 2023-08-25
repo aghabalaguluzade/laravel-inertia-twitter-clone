@@ -2,7 +2,7 @@
     <div class="relative flex flex-col items-center justify-start 2xl:w-7/12 xl:w-7/12 lg:w-7/12 sm:w-7/12 min-h-[200vh] 2xl:ml-[280px] xl:ml-[280px] lg:ml-[80px] sm:ml-[80px]">
         <div class="sticky top-0 w-full h-[96px] bg-transparent text-normalWhite mr-auto border-b-[0.5px] border-useGray backdrop-blur-sm">
             <div class="h-[48px] w-full flex items-center justify-between py-3 px-4 ">
-                <nuxt-link to="/"><h3 class="font-bold">Notifications</h3></nuxt-link>
+                <Link href="/"><h3 class="font-bold">Notifications</h3></Link>
                 <span class="fill-normalWhite p-2 hover:bg-lowWhite rounded-full cursor-pointer">
                     <svg viewBox="0 0 24 24" class="w-[16px]" aria-hidden="true">
                     <g>
@@ -17,7 +17,17 @@
                 <a class="w-6/12 text-center h-[48px] flex flex-col items-center justify-center cursor-pointer hover:bg-lowWhite transition duration-200 text-lowsWhite"><span>Mentions</span></a>
             </div>
         </div>
+    
+        <div v-for="notification in notifications.data" :key="notification.id" class="notification p-4 mb-4 border border-gray-300 rounded-lg shadow-md">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl text-white font-semibold">{{ notification.id }}</h2>
+                <span class="text-sm text-white">Aug 18, 2023</span>
+            </div>
+            <p class="mt-2 text-white">There was a login to your account @G_Aghabala from a new device on Aug 18, 2023. Review it now.</p>
+        </div>
+
     </div>
+    
     <aside class="2xl:w-5/12 xl:w-5/12 lg:w-5/12 sm:w-5/12 min-h-screen border-l-[0.5px] border-useGray relative flex flex-col justify-start gap-2 items-center px-5">
         <TwitSearch />
         <TrendsForYou />
@@ -40,10 +50,48 @@
 </template>
 
 <script setup>
-useHead({
-    title: 'notifications',
-    meta: [
-        { name: 'description', content: 'My amazing site.' }
-    ],
-})
+    import TwitSearch from '../Components/TwitSearch.vue';
+    import TrendsForYou from '../Components/TrendsForYou.vue';
+    import WhoToFollow from '../Components/WhoToFollow.vue';
+
+    import { defineProps, onMounted, onUnmounted, ref } from 'vue';
+    import { format } from 'date-fns';
+    import axios from 'axios';
+    import debounce from 'lodash/debounce';
+    
+    const props = defineProps({
+        notifications: Object,
+    })
+
+    const notifications = ref(props.notifications);
+
+    const formatDateString = (dateString) => {
+        return format(new Date(dateString), 'MMM d')
+    }
+
+    const loadMoreNotifications = () => {
+            axios.get(notifications.value.next_page_url).then((response) => {
+                notifications.value = {
+                    ...response.data,
+                    data: [...notifications.value.data, ...response.data.data],
+                };
+            });
+    };
+
+    onMounted(() => {
+        const handleScroll = debounce(() => {
+            const pixelsFromBottom = document.documentElement.offsetHeight - document.documentElement.scrollTop - window.innerHeight;
+
+            if (pixelsFromBottom < 200) {
+                loadMoreNotifications();
+            }
+        }, 100);
+
+        window.addEventListener('scroll', handleScroll);
+
+        onUnmounted(() => {
+            window.removeEventListener('scroll', handleScroll);
+        });
+    });
+
 </script>
