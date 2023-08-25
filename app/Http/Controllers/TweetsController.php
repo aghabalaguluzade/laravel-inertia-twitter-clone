@@ -11,7 +11,18 @@ class TweetsController extends Controller
 {
     public function index(Request $request) {
         
-        $tweets = Tweet::with('user')->latest()->paginate();
+       $tweets = Tweet::with('user')
+            ->withCount([
+                'likes',
+                'likes as liked' => function($q){
+                    $q->where('user_id', auth()->id());
+                }
+            ])
+            ->withCasts([
+                'liked' => 'boolean'
+            ])
+            ->latest()
+            ->paginate();
 
         if($request->wantsJson()){
             return $tweets;

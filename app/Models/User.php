@@ -43,9 +43,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'liked' => 'boolean',
     ];
 
     public function tweets() {
         return $this->hasMany(Tweet::class);
-    }    
+    }
 }

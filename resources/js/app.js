@@ -4,6 +4,7 @@ import { createApp, h } from 'vue'
 import { createInertiaApp, Link, Head } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import Layout from "./Layouts/Layout.vue";
+import TwitLike from "./Components/TwitLike.vue";
 
 createInertiaApp({
     progress: {
@@ -26,7 +27,8 @@ createInertiaApp({
         const app = createApp({ render: () => h(App, props) });
         app.use(plugin);
         app.component('Link', Link);
-        app.component('Head', Head),
+        app.component('Head', Head);
+        app.component('TwitLike', TwitLike);
         app.mount(el);
     },
 
