@@ -9,7 +9,7 @@ class UserNotificationsController extends Controller
 {
     public function index() {
 
-        // auth()->user()->unreadNotifications->markAsRead();
+        auth()->user()->unreadNotifications->markAsRead();
 
         $notifications = auth()->user()->notifications()->latest()->paginate();
 
