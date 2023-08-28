@@ -6,7 +6,6 @@
             <a class="w-6/12 text-center h-[48px] flex flex-col items-center justify-center cursor-pointer hover:bg-lowWhite transition duration-200 text-lowsWhite"><span>Following</span></a>
         </div>
     </div>
-  
   </template>
   
   <script setup>

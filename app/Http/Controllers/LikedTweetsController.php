@@ -16,12 +16,14 @@ class LikedTweetsController extends Controller
             $tweet->user->notify(new LikedTweetNotification($tweet, auth()->user()));
         }
 
-        return $tweet->load('user')
+        $tweet->load('user')
             ->loadCount([
                 'likes',
                 'likes as liked' => function($q) {
                     $q->where('user_id', auth()->user()->id);
                 }
             ]);
+
+        return redirect()->back();
     }
 }

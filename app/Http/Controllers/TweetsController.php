@@ -46,5 +46,17 @@ class TweetsController extends Controller
             'tweets' => $tweets
         ]);
     }
+
+    public function show(Tweet $tweet) {
+        $tweetStats = [
+            'likes_count' => $tweet->likes()->count(),
+            'liked' => $tweet->likes()->where('user_id', auth()->id())->exists(),
+        ];
+    
+        return Inertia::render('detail', [
+            'tweet' => $tweet->load('user'),
+            'tweetStats' => $tweetStats,
+        ]);
+    }
     
 }

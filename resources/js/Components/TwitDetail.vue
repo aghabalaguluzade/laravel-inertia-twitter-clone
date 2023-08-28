@@ -1,5 +1,5 @@
 <template>
-    <div v-for="tweet in tweets.data" :key="tweet.id" class="flex w-full h-auto cursor-pointer hover:bg-lowWhite ">
+    <div class="flex w-full h-auto cursor-pointer hover:bg-lowWhite ">
         <div class="p-3">
             <img :src="tweet.user.profile_photo_path" class="w-[45px] rounded-full" :alt="tweet.user.name" />
         </div>
@@ -17,16 +17,11 @@
                 </svg>
             </span>
             </div>
-            
-            <Link :href="String(tweet.id)">
-                <div class="text-sm text-normalWhite">
-                    {{ tweet.content }}
-                </div>
-            </Link>
-
-
-            <!-- <div class="pr-3 mt-2">
-            </div> -->
+            <div class="text-sm text-normalWhite">
+                {{ tweet.content }}
+            </div>
+            <div class="pr-3 mt-2">
+            </div>
             <ul class="flex items-center w-full justify-start gap-10 py-3">
                 <li class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
                     <span class="p-2 rounded-full group-hover:bg-hoverBlue transition duration-200">
@@ -48,11 +43,11 @@
                     </span>
                     17
                 </li>
-                <li class="flex items-center gap-1 group text-sm text-lowsWhite transition duration-200 fill-lowsWhite  hover:fill-myPink hover:text-myPink cursor-pointer" :class="{ 'fill-myPink' : tweet.liked  }">
+                <li class="flex items-center gap-1 group text-sm text-lowsWhite transition duration-200 fill-lowsWhite  hover:fill-myPink hover:text-myPink cursor-pointer" :class="{ 'fill-myPink' : tweetStats.liked  }">
                     <Link preserve-scroll method="POST" as="button" :href="`/tweets/${tweet.id}/like`"> 
                         <TwitLike></TwitLike>
                     </Link>   
-                    {{ tweet.likes_count }}
+                    {{ tweetStats.likes_count }}
                 </li>                    
                 <li class="flex items-center group gap-1 text-sm text-lowsWhite transition duration-200 fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
                     <span class="p-2 rounded-full group-hover:bg-hoverBlue transition duration-200">
@@ -76,9 +71,6 @@
             </ul>
         </div>
     </div>
-    <div v-if="tweets.next_page_url" ref="scrollIndicator" class="text-center text-gray-400 my-4">
-        Yüklənir...
-    </div>
 </template>
 
 
@@ -90,48 +82,15 @@
     import debounce from 'lodash/debounce';
 
     const props = defineProps({
-        tweets: Object,
+        tweet: Object,
+        tweetStats: Object
     })
 
-    const tweets = ref(props.tweets);
+    const tweet = ref(props.tweet);
+    const tweetStats = ref(props.tweetStats);
 
     const formatDateString = (dateString) => {
         return format(new Date(dateString), 'MMM d')
     }
-
-    const loadMoreTweets = () => {
-            axios.get(tweets.value.next_page_url).then((response) => {
-                tweets.value = {
-                    ...response.data,
-                    data: [...tweets.value.data, ...response.data.data],
-                };
-            });
-    };
-
-    onMounted(() => {
-        const handleScroll = debounce(() => {
-            const pixelsFromBottom = document.documentElement.offsetHeight - document.documentElement.scrollTop - window.innerHeight;
-
-            if (pixelsFromBottom < 200) {
-                loadMoreTweets();
-            }
-        }, 100);
-
-        window.addEventListener('scroll', handleScroll);
-
-        onUnmounted(() => {
-            window.removeEventListener('scroll', handleScroll);
-        });
-    });
-
-
-    const userPageUrl = (user) => {
-        return `/${user}`;
-    };
-
-
-    watch(() => props.tweets, (newTweets) => {
-        tweets.value = newTweets;
-    });
 
 </script>

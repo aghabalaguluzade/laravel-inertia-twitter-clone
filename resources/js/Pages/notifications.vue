@@ -20,10 +20,10 @@
     
         <div v-for="notification in notifications.data" :key="notification.id" class="notification p-4 mb-4 border border-gray-300 rounded-lg shadow-md">
             <div class="flex items-center justify-between">
-                <h2 class="text-xl text-white font-semibold">{{ notification.id }}</h2>
-                <span class="text-sm text-white">Aug 18, 2023</span>
+                <h2 class="text-xl text-white font-semibold"><Link :href="notification.data.user.username">{{ notification.data.user.username }}</Link></h2>
+                <span class="text-sm text-white">{{ formatDateString(notification.created_at) }}</span>
             </div>
-            <p class="mt-2 text-white">There was a login to your account @G_Aghabala from a new device on Aug 18, 2023. Review it now.</p>
+            <p class="mt-2 text-white"><Link :href="String(notification.data.tweet.id)">{{ notification.data.tweet.content }}</Link></p>
         </div>
 
     </div>
