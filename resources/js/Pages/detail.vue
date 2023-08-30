@@ -39,9 +39,5 @@
 </template>
 
 <script setup>
-    import WhatsHappening from "../Components/WhatsHappening.vue"
     import TwitDetail from "../Components/TwitDetail.vue"
-    import TwitSearch from "../Components/TwitSearch.vue"
-    import TrendsForYou from "../Components/TrendsForYou.vue"
-    import WhoToFollow from "../Components/WhoToFollow.vue"
 </script>

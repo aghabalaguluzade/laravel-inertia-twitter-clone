@@ -67,12 +67,6 @@
 
 
 <script setup>
-    import TwitPost from "../Components/TwitPost.vue";
-    import TwitSearch from "../Components/TwitSearch.vue";
-    import WhoToFollow from "../Components/WhoToFollow.vue";
-    import TrendsForYou from "../Components/TrendsForYou.vue";
-    
-
     import { defineProps, ref } from 'vue';
     import { format } from 'date-fns';
 

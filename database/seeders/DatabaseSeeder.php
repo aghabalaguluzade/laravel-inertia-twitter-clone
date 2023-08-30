@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
+        $aghabala = User::create([
             'name' => 'Aghabala Guluzade',
             'username' => 'aghabalaguluzade',
             'email' => 'aghabalaguluzade@gmail.com',
@@ -24,6 +24,9 @@ class DatabaseSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => null,
         ]);
+
+        $aghabala->followings()->attach($aghabala);
+
         User::factory(3000)->create();
         Tweet::factory(10000)->create();
     }

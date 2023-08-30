@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\LikedTweetsController;
 use App\Http\Controllers\TweetsController;
+use App\Http\Controllers\UserFollowController;
 use App\Http\Controllers\UserNotificationsController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications', [UserNotificationsController::class, 'index']);
     Route::get('/', [TweetsController::class, 'index']);
     Route::get('/{user:username}/status/{tweet:id}', [TweetsController::class, 'show']);
+    Route::get('/{user:username}/following', [UserFollowController::class, 'following']);
+    Route::get('/{user:username}/followers', [UserFollowController::class, 'followers']);
     Route::get('/profile', [LoginController::class, 'profile']);
     Route::get('/{user:username}', [TweetsController::class, 'users']);
     Route::post('logout', [LoginController::class, 'destroy'])->name('logout');

@@ -50,10 +50,6 @@
 </template>
 
 <script setup>
-    import TwitSearch from '../Components/TwitSearch.vue';
-    import TrendsForYou from '../Components/TrendsForYou.vue';
-    import WhoToFollow from '../Components/WhoToFollow.vue';
-
     import { defineProps, onMounted, onUnmounted, ref } from 'vue';
     import { format } from 'date-fns';
     import axios from 'axios';

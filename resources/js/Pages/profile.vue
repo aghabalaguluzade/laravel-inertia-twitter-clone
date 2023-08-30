@@ -62,13 +62,8 @@
 </template>
 
 <script setup>
-    import TwitPost from "../Components/TwitPost.vue";
-    import TwitSearch from "../Components/TwitSearch.vue";
-    import WhoToFollow from "../Components/WhoToFollow.vue";
-    import TrendsForYou from "../Components/TrendsForYou.vue";
-
-    import { usePage } from "@inertiajs/vue3";
-    import { computed, ref } from "vue";
+    import { ref } from "vue";
+    import { inject } from 'vue';
 
     const props = defineProps({
         user : Object,
@@ -77,8 +72,6 @@
 
     let tweets = ref(props.tweets);
 
-    const page = usePage();
-
-    const user = computed(() => page.props.auth.user);
+    const user = inject('user');
 
 </script>
