@@ -18,7 +18,7 @@
             </span>
             </div>
             
-            <Link :href="String(tweet.id)">
+            <Link :href="tweetLink(tweet.user.username, tweet.id)">
                 <div class="text-sm text-normalWhite">
                     {{ tweet.content }}
                 </div>
@@ -125,8 +125,8 @@
     });
 
 
-    const userPageUrl = (user) => {
-        return `/${user}`;
+    const tweetLink = (user,tweet) => {
+        return `${user}/status/${tweet}`
     };
 
 

@@ -47,7 +47,7 @@ class TweetsController extends Controller
         ]);
     }
 
-    public function show(Tweet $tweet) {
+    public function show(User $user,Tweet $tweet) {
         $tweetStats = [
             'likes_count' => $tweet->likes()->count(),
             'liked' => $tweet->likes()->where('user_id', auth()->id())->exists(),

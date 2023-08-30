@@ -31,7 +31,7 @@ class LikedTweetNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'broadcast'];
     }
 
     /**
@@ -56,5 +56,10 @@ class LikedTweetNotification extends Notification
             'tweet' => $this->tweet,
             'user' => $this->user,
         ];
+    }
+
+    public function toBroadcast(object $notifiable): array
+    {
+        return [];
     }
 }
