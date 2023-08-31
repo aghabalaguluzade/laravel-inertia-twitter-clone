@@ -8,21 +8,41 @@ use Inertia\Inertia;
 
 class UserFollowController extends Controller
 {
-    public function followers(User $user) {
+    public function followersIndex(User $user) {
         return Inertia::render('followers', [
-            'followers' => [],
+            'followers' => $user->followers()
+            ->withCount(['followers as following' => function($q) {
+                return $q->where('follower_id', auth()->id());
+            }])
+            ->withCasts(['following' => 'boolean'])
+            ->paginate(),
+            'profile' => [
+                'user' => $user
+            ]
+        ]);
+    }
+    
+    public function followingIndex(User $user) {
+        return Inertia::render('following', [
+            'followings' => $user->followings()
+            ->withCount(['followers as following' => function($q) {
+                return $q->where('follower_id', auth()->id());
+            }])
+            ->withCasts(['following' => 'boolean'])
+            ->paginate(),
             'profile' => [
                 'user' => $user
             ]
         ]);
     }
 
-    public function following(User $user) {
-        return Inertia::render('following', [
-            'following' => [],
-            'profile' => [
-                'user' => $user
-            ]
-        ]);
+    public function followingStore(User $user, $id) {
+        $user->followings()->attach($id);
+        return back();
+    }
+
+    public function followingDestroy(User $user, $id) {
+        $user->followings()->detach($id);
+        return redirect()->back();
     }
 }
