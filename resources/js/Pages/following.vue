@@ -16,6 +16,11 @@
                    <TwitFollowingButton :user="user" />
                 </li>
             </ul>
+
+            <div v-if="followings.next_page_url" ref="scrollIndicator" class="text-center text-gray-400 my-4">
+                Yüklənir...
+            </div>
+
     </div>
     </div>
     
@@ -44,7 +49,9 @@
     import TwitNavFollow from '../Components/TwitNavFollow.vue';
     import TwitFollowingButton from '../Components/TwitFollowingButton.vue';
 
-    import { ref } from "vue";
+    import { ref, onMounted, onUnmounted, } from "vue";
+    import axios from 'axios';
+    import debounce from 'lodash/debounce';
 
     const props = defineProps({
         profile : Object,
@@ -54,5 +61,29 @@
     const profile = ref(props.profile);
     const followings = ref(props.followings);
 
+    const loadMoreFollowings = () => {
+            axios.get(followings.value.next_page_url).then((response) => {
+                followings.value = {
+                    ...response.data,
+                    data: [...followings.value.data, ...response.data.data],
+                };
+            });
+    };
+
+    onMounted(() => {
+        const handleScroll = debounce(() => {
+            const pixelsFromBottom = document.documentElement.offsetHeight - document.documentElement.scrollTop - window.innerHeight;
+
+            if (pixelsFromBottom < 200) {
+                loadMoreFollowings();
+            }
+        }, 100);
+
+        window.addEventListener('scroll', handleScroll);
+
+        onUnmounted(() => {
+            window.removeEventListener('scroll', handleScroll);
+        });
+    });
 
 </script>

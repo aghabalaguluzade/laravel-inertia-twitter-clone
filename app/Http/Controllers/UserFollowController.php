@@ -9,13 +9,20 @@ use Inertia\Inertia;
 class UserFollowController extends Controller
 {
     public function followersIndex(User $user) {
+
+        $followers = $user->followers()
+        ->withCount(['followers as following' => function($q) {
+            return $q->where('follower_id', auth()->id());
+        }])
+        ->withCasts(['following' => 'boolean'])
+        ->paginate();
+
+        if(request()->wantsJson()){
+            return $followers;
+        };
+
         return Inertia::render('followers', [
-            'followers' => $user->followers()
-            ->withCount(['followers as following' => function($q) {
-                return $q->where('follower_id', auth()->id());
-            }])
-            ->withCasts(['following' => 'boolean'])
-            ->paginate(),
+            'followers' => $followers,
             'profile' => [
                 'user' => $user
             ]
@@ -23,13 +30,20 @@ class UserFollowController extends Controller
     }
     
     public function followingIndex(User $user) {
+
+        $followings = $user->followings()
+        ->withCount(['followers as following' => function($q) {
+            return $q->where('follower_id', auth()->id());
+        }])
+        ->withCasts(['following' => 'boolean'])
+        ->paginate();
+
+        if(request()->wantsJson()) {
+            return $followings;
+        }
+
         return Inertia::render('following', [
-            'followings' => $user->followings()
-            ->withCount(['followers as following' => function($q) {
-                return $q->where('follower_id', auth()->id());
-            }])
-            ->withCasts(['following' => 'boolean'])
-            ->paginate(),
+            'followings' => $followings,
             'profile' => [
                 'user' => $user
             ]

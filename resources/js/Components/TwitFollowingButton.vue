@@ -1,19 +1,21 @@
 <template>
     <Link :href="`/${$page.props.auth.user.username}/following/${user.id}`" 
     v-if="user.following" 
-    preserve-scroll 
+    preserve-scroll
+    @mouseover="showUnFollow = true"
+    @mouseleave="showUnFollow" 
     as="button" 
     method="DELETE"
-    class="px-3 py-1 rounded-l-2xl rounded-r-2xl text-sm font-semibold hover:brightness-90 transition duration-200" :class="{ 'bg-useGreen' : user.following }">
-    Following
+    class="bg-useGreen px-3 py-1 rounded-l-2xl rounded-r-2xl text-sm font-semibold hover:bg-red-600 hover:brightness-90 transition duration-200">
+    {{ showUnFollow ? 'Unfollow' : 'Following' }}
     </Link>
     
     <Link :href="`/${$page.props.auth.user.username}/following/${user.id}`" 
-    v-if="!user.following" 
-    preserve-scroll 
+    v-else 
+    preserve-scroll
     as="button" 
     method="POST"
-    class="bg-normalWhite px-3 py-1 rounded-l-2xl rounded-r-2xl text-sm font-semibold hover:brightness-90 transition duration-200" :class="{ 'bg-normalWhite' : !user.following }">
+    class="bg-normalWhite px-3 py-1 rounded-l-2xl rounded-r-2xl text-sm font-semibold hover:brightness-90 transition duration-200">
     Follow
     </Link>
 </template>
@@ -25,6 +27,8 @@
     const props = defineProps({
         user : Object
     })
+
+    const showUnFollow = ref(false);
 
     const user = ref(props.user);
 
