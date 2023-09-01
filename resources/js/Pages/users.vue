@@ -6,7 +6,7 @@
            </Link>
            <div class="flex flex-col text-normalWhite">
                <h1 class=" text-[17px] font-semibold">{{ user.name }}</h1>
-               <span class="text-[12px] font-light text-lowsWhite">0 Tweets</span>
+               <span class="text-[12px] font-light text-lowsWhite">{{ tweets_count }} Tweets</span>
            </div>
        </div>
 
@@ -67,15 +67,14 @@
 
 
 <script setup>
-    import { defineProps, ref } from 'vue';
+    import { defineProps } from 'vue';
     import { format } from 'date-fns';
-
+    
     const props = defineProps({
         user : Object,
         tweets: Object,
+        tweets_count : Number
     })
-
-    let tweets = ref(props.tweets);
 
     const formatDateString = (dateString) => {
         return format(new Date(dateString), 'MMM d')

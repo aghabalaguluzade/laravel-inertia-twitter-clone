@@ -10,8 +10,11 @@ use Inertia\Inertia;
 class TweetsController extends Controller
 {
     public function index(Request $request) {
-        
-       $tweets = Tweet::with('user')
+
+       $tweets = Tweet::where(function($q) {
+                $q->where('user_id', auth()->id())
+                    ->orWhereIn('user_id', auth()->user()->followings->pluck('id'));
+            })
             ->withCount([
                 'likes',
                 'likes as liked' => function($q){
@@ -21,6 +24,7 @@ class TweetsController extends Controller
             ->withCasts([
                 'liked' => 'boolean'
             ])
+            ->with('user')
             ->latest()
             ->paginate();
 
@@ -35,7 +39,10 @@ class TweetsController extends Controller
 
     public function users(Request $request, User $user) {
 
-        $tweets = $user->tweets()->with('user')->latest()->paginate();
+        $tweets = $user->tweets()
+            ->with('user')
+            ->latest()
+            ->paginate();
 
         if($request->wantsJson()){
             return $tweets;
@@ -43,7 +50,8 @@ class TweetsController extends Controller
 
         return Inertia::render('users', [
             'user' => $user,
-            'tweets' => $tweets
+            'tweets' => $tweets,
+            'tweets_count' => $user->tweets()->count(),
         ]);
     }
 
@@ -57,6 +65,19 @@ class TweetsController extends Controller
             'tweet' => $tweet->load('user'),
             'tweetStats' => $tweetStats,
         ]);
+    }
+
+    public function store(Request $request) {
+        $request->validate([
+            'content' => 'required|max:280'
+        ]);
+
+        Tweet::create([
+            'user_id' => auth()->id(),
+            'content' => $request->input('content'),
+        ]);
+
+        return redirect()->back();
     }
     
 }

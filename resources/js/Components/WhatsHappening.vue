@@ -3,7 +3,8 @@
         <Link href="/" class="cursor-pointer py-1 h-auto">
             <img :src="user.profile_photo_path" class="w-[43px] rounded-full hover:brightness-90" alt="">
         </Link>
-        <div class="w-full flex flex-col group py-1 items-start ">
+        <div class="w-full flex flex-col group py-1 ">
+            <form @submit.prevent="submit()">
             <button class="hover:bg-hoverGreen relative group  group-focus-within:flex cursor-pointer  transition duration-200 hidden gap-2 items-center text-useGreen text-[12px]  ml-2 py-[1px] px-[12px] rounded-l-full rounded-r-full border-[1px] border-lowsWhite ">
                 Everyone
                 <svg viewBox="0 0 24 24" class="w-[13px] fill-useGreen" aria-hidden="true">
@@ -40,10 +41,9 @@
                     </a>
                 </span>
             </button>
-            <!-- <input type="text" v-model="input" placeholder="What's happening?"
-                   class="text-normalWhite bg-transparent text-lg outline-none resize-none overflow-hidden px-2 mt-2 w-full"> -->
-                   <input type="text" placeholder="What's happening?"
-                   class="text-normalWhite bg-transparent text-lg outline-none resize-none overflow-hidden px-2 mt-2 w-full">
+            <textarea type="text" v-model="form.content" @input="resizeTextarea()" ref="tweetContent" name="content" placeholder="What's happening?"
+                   class="text-normalWhite bg-transparent text-lg outline-none resize-none overflow-hidden px-2 mt-2 w-full"></textarea>
+                   <div v-if="$page.props.errors.content" v-text="$page.props.errors.content" class="text-red-500 text-xs mt-1"></div>
             <div class="border-b-[1px] border-lowsWhite w-full mt-2 py-3 hidden group-focus-within:block">
                 <button class="flex gap-1 relative group hover:bg-hoverGreen transition duration-200 text-useGreen text-[13px] items-center px-2 rounded-l-full rounded-r-full">
                     <svg viewBox="0 0 24 24" aria-hidden="true" class="w-[13px] fill-useGreen">
@@ -133,20 +133,63 @@
                     </li>
                 </ul>
                 <div class="mt-2">
-                    <!-- <button v-bind:class="isFill">Tweet</button> -->
-                    <button>Tweet</button>
+                    <span class="text-useGreen mr-3" :class="{ 'text-red-600' : requiredCharacter < 0 }">{{ requiredCharacter }}</span>
+                    <button :disabled="!canSubmit" class="text-normalWhite bg-useGreen text-sm font-bold rounded-l-full rounded-r-full py-[6px] px-3">
+                    <span v-if="loading" class="btn-spinner mr-1"></span>
+                        Tweet
+                    </button>
                 </div>
             </div>
+        </form>
         </div>
     </div>
 </template>
 
 <script setup>
-    import { computed } from "vue";
-    import { usePage } from "@inertiajs/vue3";
+    import { computed, reactive, ref, watch } from "vue";
+    import { usePage, router } from "@inertiajs/vue3";
 
     const page = usePage();
 
     const user = computed(() => page.props.auth.user);
 
+    const loading = ref(false);
+    const tweetContent = ref(null);
+
+    const form = reactive({
+        content: ''
+    });
+
+    const requiredCharacter = computed(() => {
+        return 270 - form.content.length;
+    });
+
+    const requiredCharacterValue = ref(requiredCharacter.value);
+
+    watch(requiredCharacter, (newVal) => {
+        requiredCharacterValue.value = newVal;
+    });
+
+    const canSubmit = computed(() => {
+        return form.content.length && requiredCharacterValue.value >= 0;
+    });
+
+    const submit = () => {
+        loading.value = true;
+        router.post('/tweets', form, { preserveState : false });
+    };
+
+    const resizeTextarea = () => {
+        const textarea = tweetContent.value;
+        textarea.height = 'initial';
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    };
+
 </script>
+
+<style scoped>
+    button:disabled {
+        opacity: 75%;
+        cursor: not-allowed;
+    }
+</style>

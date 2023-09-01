@@ -40,7 +40,8 @@ class HandleInertiaRequests extends Middleware
             'auth.user' => fn () => $request->user()
                 ? $request->user()->only('id', 'name', 'username', 'email', 'profile_photo_path')
                 : null,
-            'unreadNotifications' => $request->user()?->unreadNotifications?->count()
+            'unreadNotifications' => $request->user()?->unreadNotifications?->count(),
+            'twit_count' => $request->user()?->tweets?->count(),
         ]);
     }
 }

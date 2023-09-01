@@ -5,8 +5,8 @@
                <svg viewBox="0 0 24 24" aria-hidden="true" class=" w-[18px]"><g><path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path></g></svg>
            </Link>
            <div class="flex flex-col text-normalWhite">
-               <h1 class=" text-[17px] font-semibold">Eral Keskinkurt</h1>
-               <span class="text-[12px] font-light text-lowsWhite">0 Tweets</span>
+               <h1 class=" text-[17px] font-semibold">{{ user.name }}</h1>
+               <span class="text-[12px] font-light text-lowsWhite">{{ twitCount }} Tweets</span>
            </div>
        </div>
 
@@ -64,14 +64,19 @@
 <script setup>
     import { ref } from "vue";
     import { inject } from 'vue';
+    import { usePage } from "@inertiajs/vue3";
 
     const props = defineProps({
         user : Object,
         tweets: Object,
     })
 
+    const page = usePage();
+
     let tweets = ref(props.tweets);
 
     const user = inject('user');
+
+    const twitCount = page.props.twit_count;
 
 </script>

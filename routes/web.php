@@ -26,6 +26,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications', [UserNotificationsController::class, 'index']);
     Route::get('/', [TweetsController::class, 'index']);
     Route::get('/{user:username}/status/{tweet:id}', [TweetsController::class, 'show']);
+    Route::post('/tweets', [TweetsController::class, 'store']);
     Route::get('/{user:username}/following', [UserFollowController::class, 'followingIndex']);
     Route::post('/{user:username}/following/{id}', [UserFollowController::class, 'followingStore']);
     Route::delete('/{user:username}/following/{id}', [UserFollowController::class, 'followingDestroy']);
