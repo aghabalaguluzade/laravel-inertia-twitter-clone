@@ -24,9 +24,12 @@
                 </div>
             </Link>
 
-
-            <!-- <div class="pr-3 mt-2">
-            </div> -->
+            <div v-if="tweet.media">
+                <div v-for="(item, index) in tweet.media" :key="index" class="pr-3 mt-2">
+                    <img :src="item.full_url" class="object-cover border-[1px] border-lowsWhite rounded-lg" alt="post image">
+                </div>
+            </div>
+            
             <ul class="flex items-center w-full justify-start gap-10 py-3">
                 <li class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
                     <span class="p-2 rounded-full group-hover:bg-hoverBlue transition duration-200">
@@ -129,6 +132,7 @@
         return `${user}/status/${tweet}`
     };
 
+    console.log(tweets);
 
     watch(() => props.tweets, (newTweets) => {
         tweets.value = newTweets;

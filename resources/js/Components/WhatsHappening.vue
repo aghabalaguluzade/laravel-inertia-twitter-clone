@@ -43,6 +43,20 @@
             </button>
             <textarea type="text" v-model="form.content" @input="resizeTextarea()" ref="tweetContent" name="content" placeholder="What's happening?"
                    class="text-normalWhite bg-transparent text-lg outline-none resize-none overflow-hidden px-2 mt-2 w-full"></textarea>
+                   
+                    <div v-if="media.length" class="grid gap" :class="{ 'grid-cols-2' : media.length > 1 }">
+                        <div v-for="(item, index) in media" :key="index" class="relative flex flex-col items-center justify-center">
+                            <button @click="removeMedia(index,item)" class="absolute m-1 top-0 left-0 text-white bg-black bg-opacity-75 rounded-full cursor-pointer hover:bg-opacity-100 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+
+                            </button>
+                            <img :src="item.url" alt="" class="rounded-xl object-cover h-48" />
+                            <div v-if="item.loading" class="absolute bg-black bg-opacity-75 text-white text-sm rounded px-2">Loading...</div>
+                        </div>
+                    </div>
+
                    <div v-if="$page.props.errors.content" v-text="$page.props.errors.content" class="text-red-500 text-xs mt-1"></div>
             <div class="border-b-[1px] border-lowsWhite w-full mt-2 py-3 hidden group-focus-within:block">
                 <button class="flex gap-1 relative group hover:bg-hoverGreen transition duration-200 text-useGreen text-[13px] items-center px-2 rounded-l-full rounded-r-full">
@@ -90,11 +104,12 @@
             <div class="flex items-center justify-between px-2 w-full">
                 <ul class="flex items-center pt-6 pb-2 gap-3">
                     <li class="cursor-pointer hover:bg-hoverGreen rounded-full p-1">
-                        <svg viewBox="0 0 24 24" class="w-[18px] fill-useGreen" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" class="w-[18px] fill-useGreen" aria-hidden="true" @click="openFileInput">
                             <g>
                                 <path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path>
                             </g>
                         </svg>
+                        <input type="file" id="fileInput" name="file" ref="picker" accept="image/*" class="hidden" @change="handleFileSelect" multiple />
                     </li>
                     <li class="cursor-pointer hover:bg-hoverGreen rounded-full p-1">
                         <svg viewBox="0 0 24 24" class="w-[18px] fill-useGreen" aria-hidden="true">
@@ -147,7 +162,8 @@
 
 <script setup>
     import { computed, reactive, ref, watch } from "vue";
-    import { usePage, router } from "@inertiajs/vue3";
+    import { usePage, useForm, router } from "@inertiajs/vue3";
+    import axios from 'axios';
 
     const page = usePage();
 
@@ -155,10 +171,18 @@
 
     const loading = ref(false);
     const tweetContent = ref(null);
+    const picker = ref(null);
+    const media = ref([]);
 
-    const form = reactive({
-        content: ''
-    });
+    // const form = reactive({
+    //     content: '',
+    //     mediaIds : []
+    // });
+
+    const form = useForm({
+        content: '',
+        mediaIds : []
+    })
 
     const requiredCharacter = computed(() => {
         return 270 - form.content.length;
@@ -175,8 +199,21 @@
     });
 
     const submit = () => {
-        loading.value = true;
-        router.post('/tweets', form, { preserveState : false });
+        form.mediaIds = media.value.map(item => item.id);
+        axios.post('/tweets', form, { 
+            preserveState : true,
+            onStart : () => loading.value = true,
+            onFinish : () => loading.value = false,
+            onSuccess : () => {
+                if(Object.keys($page.props.errors).length === 0) {
+                    form = {
+                        content : '',
+                        mediaIds : []
+                    };
+                    media = [];
+                }
+            }
+        });
     };
 
     const resizeTextarea = () => {
@@ -185,7 +222,57 @@
         textarea.style.height = `${textarea.scrollHeight}px`;
     };
 
+    const openFileInput = () => {
+        const file = picker.value;
+        file.click();
+        
+    };
+
+    const handleFileSelect = (event) => {
+        
+        const selectedFiles = event.target.files;
+
+        Array.from(selectedFiles).forEach((file) => {
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onload = (e) => {
+                let item = {
+                    url : e.target.result,
+                    id : undefined,
+                    loading : true
+                };
+
+                let formData = new FormData();
+                formData.append('file', file);
+                axios.post('media', formData)
+                    .then((data) => {
+                        item.id = data.id
+                    }).finally(() => {
+                        item.loading = false;
+                    });
+
+                media.value.push(item);
+            }
+        });
+    };
+
+
+    const removeMedia = (index,item) => {
+        media.value.splice(index,1);
+
+        if(item.id) {
+            axios.delete(`media/${item.id}`).catch((e) => {
+                console.log(e);
+                media.value.splice(index,0,item);
+            });
+        }
+
+    };
+
 </script>
+
+
 
 <style scoped>
     button:disabled {

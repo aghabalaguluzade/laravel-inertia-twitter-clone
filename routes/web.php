@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\LikedTweetsController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\TweetsController;
 use App\Http\Controllers\UserFollowController;
 use App\Http\Controllers\UserNotificationsController;
@@ -27,6 +28,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [TweetsController::class, 'index']);
     Route::get('/{user:username}/status/{tweet:id}', [TweetsController::class, 'show']);
     Route::post('/tweets', [TweetsController::class, 'store']);
+    Route::post('/media', [MediaController::class, 'store']);
+    Route::delete('/media/{media}', [MediaController::class, 'destroy']);
     Route::get('/{user:username}/following', [UserFollowController::class, 'followingIndex']);
     Route::post('/{user:username}/following/{id}', [UserFollowController::class, 'followingStore']);
     Route::delete('/{user:username}/following/{id}', [UserFollowController::class, 'followingDestroy']);

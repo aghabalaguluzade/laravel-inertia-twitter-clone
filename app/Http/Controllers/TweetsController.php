@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Media;
 use App\Models\Tweet;
 use App\Models\User;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -24,9 +26,9 @@ class TweetsController extends Controller
             ->withCasts([
                 'liked' => 'boolean'
             ])
-            ->with('user')
+            ->with(['user', 'media'])
             ->latest()
-            ->paginate();
+            ->paginate(); 
 
         if($request->wantsJson()){
             return $tweets;
@@ -69,12 +71,23 @@ class TweetsController extends Controller
 
     public function store(Request $request) {
         $request->validate([
-            'content' => 'required|max:280'
+            'content' => 'required|max:280',
+            'mediaIds.*' => [
+                Rule::exists('media', 'id')
+                    ->where(function($q) use ($request) {
+                        $q->where('user_id', $request->user()->id);
+                })
+            ]
         ]);
 
-        Tweet::create([
-            'user_id' => auth()->id(),
+        $tweet = Tweet::create([
+            'user_id' => $request->user()->id,
             'content' => $request->input('content'),
+        ]);
+
+        Media::find($request->mediaIds)->each->update([
+            'model_id' => $tweet->id,
+            'model_type' => Tweet::class,
         ]);
 
         return redirect()->back();
