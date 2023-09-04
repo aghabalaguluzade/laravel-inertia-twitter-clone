@@ -70,22 +70,23 @@ class TweetsController extends Controller
     }
 
     public function store(Request $request) {
+
         $request->validate([
-            'content' => 'required|max:280',
+            'content' => ['required','max:270'],
             'mediaIds.*' => [
                 Rule::exists('media', 'id')
                     ->where(function($q) use ($request) {
-                        $q->where('user_id', $request->user()->id);
+                        return $q->where('user_id', $request->user()->id);
                 })
-            ]
-        ]);
-
+            ],
+        ]); 
+ 
         $tweet = Tweet::create([
             'user_id' => $request->user()->id,
             'content' => $request->input('content'),
         ]);
 
-        Media::find($request->mediaIds)->each->update([
+        Media::find($request->input('mediaIds'))->each->update([
             'model_id' => $tweet->id,
             'model_type' => Tweet::class,
         ]);

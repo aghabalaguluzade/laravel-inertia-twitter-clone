@@ -25,7 +25,7 @@ class Tweet extends Model
     }
 
     public function media(): MorphMany {
-        return $this->morphMany(Media::class, 'model');
+        return $this->morphMany(Media::class, 'mediaable');
     }
 
 }

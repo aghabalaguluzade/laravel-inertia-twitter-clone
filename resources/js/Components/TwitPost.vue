@@ -132,8 +132,6 @@
         return `${user}/status/${tweet}`
     };
 
-    console.log(tweets);
-
     watch(() => props.tweets, (newTweets) => {
         tweets.value = newTweets;
     });

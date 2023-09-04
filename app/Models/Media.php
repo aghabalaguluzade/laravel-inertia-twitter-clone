@@ -13,11 +13,11 @@ class Media extends Model
     protected $guarded = [];
     protected $appends = ['full_url'];
 
-    public function model():MorphTo {
+    public function mediaable():MorphTo {
         return $this->morphTo();
     }
 
     public function getFullUrlAttribute() {
-        return url('media/' . $this->user_id . '/' . $this->created_at->format('Y-m-d') . '/' . $this->filename);
+        return url('storage/media/' . $this->user_id . '/' . $this->created_at->format('Y-m-d') . '/' . $this->filename);
     }
 }

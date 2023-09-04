@@ -162,7 +162,7 @@
 
 <script setup>
     import { computed, reactive, ref, watch } from "vue";
-    import { usePage, useForm, router } from "@inertiajs/vue3";
+    import { usePage, router } from "@inertiajs/vue3";
     import axios from 'axios';
 
     const page = usePage();
@@ -174,15 +174,10 @@
     const picker = ref(null);
     const media = ref([]);
 
-    // const form = reactive({
-    //     content: '',
-    //     mediaIds : []
-    // });
-
-    const form = useForm({
+    const form = reactive({
         content: '',
         mediaIds : []
-    })
+    });
 
     const requiredCharacter = computed(() => {
         return 270 - form.content.length;
@@ -195,22 +190,20 @@
     });
 
     const canSubmit = computed(() => {
-        return form.content.length && requiredCharacterValue.value >= 0;
+        return form.content.length && requiredCharacterValue.value >= 0 && media.value.every(item => !item.loading);
     });
 
     const submit = () => {
         form.mediaIds = media.value.map(item => item.id);
-        axios.post('/tweets', form, { 
+        router.post('/tweets', form, { 
             preserveState : true,
             onStart : () => loading.value = true,
             onFinish : () => loading.value = false,
             onSuccess : () => {
-                if(Object.keys($page.props.errors).length === 0) {
-                    form = {
-                        content : '',
-                        mediaIds : []
-                    };
-                    media = [];
+                if(Object.keys(page.props.errors).length === 0) {
+                    form.content = '';
+                    form.mediaIds = [];
+                    media.value = [];
                 }
             }
         });
@@ -247,7 +240,7 @@
                 formData.append('file', file);
                 axios.post('media', formData)
                     .then((data) => {
-                        item.id = data.id
+                        item.id = data.data.id
                     }).finally(() => {
                         item.loading = false;
                     });
@@ -263,7 +256,6 @@
 
         if(item.id) {
             axios.delete(`media/${item.id}`).catch((e) => {
-                console.log(e);
                 media.value.splice(index,0,item);
             });
         }
