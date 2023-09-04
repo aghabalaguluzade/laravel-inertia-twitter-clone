@@ -14,7 +14,7 @@
                 </svg>
                 <span class="flex flex-col text-normalWhite gap-2 py-1 z-100 top-7 -right-12 rounded-xl absolute bg-black shadow-[rgba(222,222,222,0.6)] shadow-[0_0_7px_0] w-64 opacity-0 group-focus:opacity-100 pointer-events-none group-focus:pointer-events-auto transition duration-200">
                     <span class="text-lg text-start px-2 py-2 font-bold">Choose audience</span>
-                    <a class="flex items-center text-[14px] gap-2 px-4 py-2 cursor-pointer hover:bg-lowWhite">
+                    <a href="#" class="flex items-center text-[14px] gap-2 px-4 py-2 cursor-pointer hover:bg-lowWhite">
                         <span class="bg-useGreen rounded-full p-2">
                             <svg viewBox="0 0 24 24" class="fill-normalWhite w-[18px]" aria-hidden="true">
                                 <g><path
@@ -41,7 +41,7 @@
                     </a>
                 </span>
             </button>
-            <textarea type="text" v-model="form.content" @input="resizeTextarea()" ref="tweetContent" name="content" placeholder="What's happening?"
+            <textarea type="text" v-model="form.content" @input="resizeTextarea()" ref="tweetContent" name="content" :placeholder="placeholder"
                    class="text-normalWhite bg-transparent text-lg outline-none resize-none overflow-hidden px-2 mt-2 w-full"></textarea>
                    
                     <div v-if="media.length" class="grid gap" :class="{ 'grid-cols-2' : media.length > 1 }">
@@ -168,6 +168,10 @@
     const page = usePage();
 
     const user = computed(() => page.props.auth.user);
+
+    const props = defineProps({
+        placeholder : String
+    });
 
     const loading = ref(false);
     const tweetContent = ref(null);

@@ -15,7 +15,8 @@
         </div>
 
         <TwitDetail :tweet="$page.props.tweet" :tweetStats="$page.props.tweetStats" />
-        <WhatsHappening/>
+        <WhatsHappening placeholder="Post your reply!" />
+        <TwitDetail :tweet="$page.props.tweet" :tweetStats="$page.props.tweetStats" />
     </div>
     <aside class="2xl:w-5/12 xl:w-5/12 lg:w-5/12 sm:w-5/12 min-h-screen border-l-[0.5px] border-useGray relative flex flex-col justify-start gap-2 items-center px-5">
         <TwitSearch />

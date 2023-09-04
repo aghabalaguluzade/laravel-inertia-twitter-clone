@@ -65,7 +65,7 @@
                             </g>
                         </svg>
                     </span>
-                    18.0k
+                    {{ tweet.tweet_view_count ?? 0 }}
                 </li>
                 <li class="flex items-center group gap-1 text-sm text-lowsWhite transition duration-200 fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
                     <span class="p-2 rounded-full group-hover:bg-hoverBlue transition duration-200">

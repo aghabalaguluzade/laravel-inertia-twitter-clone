@@ -59,7 +59,9 @@
             <span>© 2023 Twitter, Inc.</span>
         </div>
     </aside>
+    
 </template>
+
 
 <script setup>
     import { ref } from "vue";

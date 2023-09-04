@@ -28,4 +28,8 @@ class Tweet extends Model
         return $this->morphMany(Media::class, 'mediaable');
     }
 
+    public function tweet_view() {
+        return $this->hasOne(TweetView::class);
+    }
+
 }
