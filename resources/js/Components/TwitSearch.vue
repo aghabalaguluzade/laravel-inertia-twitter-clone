@@ -21,71 +21,55 @@
         </div>
     </div>
 
-    <div class="max-h-48 overflow-y-auto z-10">
-        <div v-for="user in users" :key="user.id">
-        <span class="text-white">salam</span>
-            
-            <p class="text-white">{{ user.username }}</p>
-        </div>
-  
-    <div class="flex items-center mt-2" v-for="user in users" :key="user.id">
-        <span class="text-white">salam</span>
-        <div class="w-10 h-10 mr-4">
-            <div class="w-full h-full rounded-full overflow-hidden">
-                <img src="https://pbs.twimg.com/profile_images/1576085948743524352/JQ-gfbyf_normal.jpg" alt="" class="w-full h-full object-cover">
+    <div class="max-h-48 w-72 overflow-y-auto z-10">
+        <div class="flex items-center mt-2" v-if="users && users.length > 0" v-for="user in users" :key="user.id">
+            <div class="w-10 h-10 mr-4">
+                <div class="w-full h-full rounded-full overflow-hidden">
+                    <img :src="user.profile_photo_path" alt="" class="w-full h-full object-cover">
+                </div>
+            </div>
+            <div>
+                <div class="text-white">{{ user.name }}</div>
+                <span class="text-lg font-semibold text-white">@{{ user.username }}</span>
+                <br>
+                <span class="text-lg font-semibold text-gray-500">Following</span>
             </div>
         </div>
-        <div>
-            <div class="text-white">Povilas Korop | Laravel Courses Creator & Youtuber</div>
-            <span class="text-lg font-semibold text-white">@{{ user.username }}</span>
-            <br>
-            <span class="text-lg font-semibold text-gray-500">Following</span>
-        </div>
+        <!-- <div v-else class="text-white">Nəticə yoxdur...</div>  -->
     </div>
-  
-</div>
     
 </template> 
 
 
 <script setup>
     import { ref, watch } from 'vue';
-    import { router } from '@inertiajs/vue3';
     import debounce from "lodash/debounce";
 
     const props = defineProps({
-        users: {
-            type: Array,
-            default: () => [],
-            },
+        users: Object
     });
-
+    
     const search = ref('');
+    const users = ref([]);
+    console.log(users);
 
-    const users = ref(props.users);
 
     const clearSearchInput = () => {
         search.value = '';
     };
 
-    // watch(search, (value) => {
-    //     router.get("/search", 
-    //         { search: value },
-    //         {
-    //             preserveState: true,
-    //             replace: true,
-    //         });
-    // });
-
     watch(() => search.value, debounce(function(value) {
-        router.get('/', { search: value }, {
-            preserveState: true,
-            replace: true
-        }, 300);
-}));
-
+        axios.get('/search', {
+            params: {
+                search: value
+            }
+        })
+        .then(response => {
+            users.value = response.data
+        })
+        .catch(error => {
+            console.error('Xəta', error);
+        });
+    },300));
 
 </script>
-
-
-

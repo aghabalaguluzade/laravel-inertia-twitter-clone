@@ -1,8 +1,5 @@
 <template>
     <div class="relative flex flex-col items-center justify-start 2xl:w-7/12 xl:w-7/12 lg:w-7/12 sm:w-7/12 min-h-screen 2xl:ml-[280px] xl:ml-[280px] lg:ml-[80px] sm:ml-[80px]">
-        
-        <!-- Nav -->
-
         <div class="sticky top-0 w-full h-[66px] bg-transparent text-normalWhite mr-auto border-b-[0.5px] border-useGray backdrop-blur-sm">
             <div class="flex items-center">
                 <Link href="/" class="p-3 px-4 h-[48px] flex items-center">

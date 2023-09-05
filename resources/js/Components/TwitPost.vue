@@ -1,5 +1,5 @@
 <template>
-    <div v-for="tweet in tweets.data" :key="tweet.id" class="flex w-full h-auto cursor-pointer hover:bg-lowWhite ">
+    <div v-for="tweet in tweets.data" :key="tweet.id" class="flex w-full h-auto cursor-pointer hover:bg-lowWhite" :class="{ 'bg-opacity-50' : isOpen }">
         <div class="p-3">
             <img :src="tweet.user.profile_photo_path" class="w-[45px] rounded-full" :alt="tweet.user.name" />
         </div>
@@ -31,16 +31,18 @@
             </div>
             
             <ul class="flex items-center w-full justify-start gap-10 py-3">
-                <li class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
-                    <span class="p-2 rounded-full group-hover:bg-hoverBlue transition duration-200">
-                        <svg viewBox="0 0 24 24" class=" w-[20px]" aria-hidden="true">
-                        <g>
-                            <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path>
-                        </g>
-                        </svg>
-                    </span>
-                    0
-                </li>
+                    
+                    <li @click="clickRepy" class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
+                        <span class="p-2 rounded-full group-hover:bg-hoverBlue transition duration-200">
+                            <svg viewBox="0 0 24 24" class=" w-[20px]" aria-hidden="true">
+                            <g>
+                                <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path>
+                            </g>
+                            </svg>
+                        </span>
+                        0
+                    </li>
+
                 <li class="flex items-center gap-1 group text-sm text-lowsWhite transition duration-200 fill-lowsWhite hover:fill-useGreen hover:text-useGreen cursor-pointer">
                     <span class="p-2 rounded-full group-hover:bg-hoverGreen transition duration-200">
                         <svg viewBox="0 0 24 24" class=" w-[20px]" aria-hidden="true">
@@ -78,6 +80,16 @@
                 </li>
             </ul>
         </div>
+
+        <WhatsHappening v-show="isOpen" :tweetContent="tweet" :open="isOpen" placeholder="Post your reply!" class="
+        absolute
+        flex
+        items-center
+        justify-center
+        bg-gray-700 bg-opacity-50 
+        h-12
+        top-60"></WhatsHappening>
+
     </div>
     <div v-if="tweets.next_page_url" ref="scrollIndicator" class="text-center text-gray-400 my-4">
         Yüklənir...
@@ -91,10 +103,17 @@
     import { format } from 'date-fns';
     import axios from 'axios';
     import debounce from 'lodash/debounce';
+    import WhatsHappening from './WhatsHappening.vue';
 
     const props = defineProps({
         tweets: Object,
     })
+
+    const isOpen = ref(false);
+
+    const clickRepy = () => {
+        isOpen.value = !isOpen.value;
+    }
 
     const tweets = ref(props.tweets);
 

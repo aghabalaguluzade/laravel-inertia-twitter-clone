@@ -8,6 +8,7 @@ use App\Models\TweetView;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Inertia\Inertia;
 
 class TweetsController extends Controller
@@ -66,12 +67,24 @@ class TweetsController extends Controller
             'tweet_view_count' => $tweet->tweet_view()->count(),
         ];
 
-        TweetView::create([
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-            'tweet_id' => $tweet->id,
-            'user_id' => $request?->user?->id
-        ]); 
+        if (!Cookie::has('viewed_posts')) {
+            $viewedPosts = [];
+        } else {
+            $viewedPosts = json_decode(Cookie::get('viewed_posts'), true);
+        }
+        
+        if (!in_array($tweet->id, $viewedPosts)) {
+            TweetView::create([
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'tweet_id' => $tweet->id,
+                'user_id' => $request->user()?->id,
+            ]);
+        
+            $viewedPosts[] = $tweet->id;
+        
+            Cookie::queue('viewed_posts', json_encode($viewedPosts), 60 * 24 * 365);
+        }
     
         return Inertia::render('detail', [
             'tweet' => $tweet->load('user'),
@@ -108,28 +121,22 @@ class TweetsController extends Controller
     {
         $search = $request->input('search');
 
+        $users = User::query()
+            ->when($search, function($query) use ($search) {
+                $query->where('username', 'LIKE', '%' . $search . '%')
+                    ->orWhere('name', 'LIKE', '%' . $search . '%');
+            })
+            // ->whereNot('id', auth()->user()->id)
+            ->orderBy('id', 'desc')
+            ->get();
+
+            if($request->wantsJson()) {
+                return $users;
+            };
+
         return Inertia::render('TwitSearch', [
-            'users' => User::query()
-                ->when($search, fn($query, $search) => $query->where('name', 'like', '%' . $search . '%'))
-                // ->whereNot('id', auth()->user()->id)
-                ->orderBy('id', 'desc')
-                ->limit(10)
-                ->get()
+            'users' => $users
         ]);
     }
-
-    // public function search(Request $request)
-    // {
-    //     $search = $request->input('search');
-
-    //     return Inertia::render('TwitSearch', [
-    //         'users' => User::query()
-    //             ->when($search, fn($query, $search) => $query->where('username', 'like', '%' . $search . '%'))
-    //             // ->whereNot('id', auth()->user()->id)
-    //             ->orderBy('id', 'desc')
-    //             ->paginate(10)
-    //             ->withQueryString()
-    //     ]);
-    // }
 
 }

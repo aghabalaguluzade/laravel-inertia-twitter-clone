@@ -1,4 +1,7 @@
 <template>
+    <!-- <div v-if="isOpen">
+        <p class="text-white">salam</p>
+    </div> -->
     <div class="flex w-full items-start gap-2 px-4 py-1 border-b-[0.5px] border-lowWhite h-auto">
         <Link href="/" class="cursor-pointer py-1 h-auto">
             <img :src="user.profile_photo_path" class="w-[43px] rounded-full hover:brightness-90" alt="">
@@ -170,8 +173,13 @@
     const user = computed(() => page.props.auth.user);
 
     const props = defineProps({
-        placeholder : String
+        placeholder : String,
+        tweet : Object,
+        isOpen : Boolean
     });
+
+    const tweet = ref(props.tweet);
+    const isOpen = ref(props.isOpen);
 
     const loading = ref(false);
     const tweetContent = ref(null);
