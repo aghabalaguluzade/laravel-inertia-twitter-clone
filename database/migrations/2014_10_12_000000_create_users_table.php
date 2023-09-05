@@ -22,14 +22,18 @@ return new class extends Migration
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();
+            $table->fullText(['username', 'name']);
         });
     }
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
-    {
-        Schema::dropIfExists('users');
-    }
+        public function down(): void
+        {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropFullText(['username', 'name']);
+            });
+            Schema::dropIfExists('users');
+        }
 };

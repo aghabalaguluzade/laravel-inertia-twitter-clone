@@ -121,14 +121,25 @@ class TweetsController extends Controller
     {
         $search = $request->input('search');
 
+        // $users = User::query()
+        //     ->when($search, function($query) use ($search) {
+        //         $query->where('username', 'LIKE', '%' . $search . '%')
+        //             ->orWhere('name', 'LIKE', '%' . $search . '%');
+        //     })
+        //     // ->whereNot('id', auth()->user()->id)
+        //     ->orderBy('id', 'desc')
+        //     ->get();
+
+        
         $users = User::query()
-            ->when($search, function($query) use ($search) {
-                $query->where('username', 'LIKE', '%' . $search . '%')
-                    ->orWhere('name', 'LIKE', '%' . $search . '%');
-            })
-            // ->whereNot('id', auth()->user()->id)
-            ->orderBy('id', 'desc')
-            ->get();
+        ->when(request('search'), function ($query, $search) {
+            $query->whereFullText(['username', 'name'], $search);
+        })
+        // ->whereNot('id', auth()->user()->id)
+        ->orderBy('id', 'desc') 
+        ->get();
+
+
 
             if($request->wantsJson()) {
                 return $users;

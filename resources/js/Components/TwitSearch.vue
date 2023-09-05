@@ -21,21 +21,21 @@
         </div>
     </div>
 
-    <div class="max-h-48 w-72 overflow-y-auto z-10">
-        <div class="flex items-center mt-2" v-if="users && users.length > 0" v-for="user in users" :key="user.id">
-            <div class="w-10 h-10 mr-4">
-                <div class="w-full h-full rounded-full overflow-hidden">
-                    <img :src="user.profile_photo_path" alt="" class="w-full h-full object-cover">
+    <div class="max-h-48  overflow-y-auto z-10">
+            <Link :href="user.username" class="flex items-center mt-2" v-if="users && users.length > 0" v-for="user in users" :key="user.id">
+                <div class="w-10 h-10 mr-4">
+                    <div class="w-full h-full rounded-full overflow-hidden">
+                        <img :src="user.profile_photo_path" alt="" class="w-full h-full object-cover">
+                    </div>
                 </div>
-            </div>
-            <div>
-                <div class="text-white">{{ user.name }}</div>
-                <span class="text-lg font-semibold text-white">@{{ user.username }}</span>
-                <br>
-                <span class="text-lg font-semibold text-gray-500">Following</span>
-            </div>
-        </div>
-        <!-- <div v-else class="text-white">Nəticə yoxdur...</div>  -->
+                <div>
+                    <div class="text-white">{{ user.name }}</div>
+                    <span class="text-lg font-semibold text-white">@{{ user.username }}</span>
+                    <br>
+                    <span class="text-lg font-semibold text-gray-500">Following</span>
+                </div>
+            </Link>
+            <div v-else class="text-white">Nəticə yoxdur...</div>
     </div>
     
 </template> 
@@ -46,12 +46,14 @@
     import debounce from "lodash/debounce";
 
     const props = defineProps({
-        users: Object
+        users: {
+            type : Object,
+            default : {}
+        }
     });
     
     const search = ref('');
     const users = ref([]);
-    console.log(users);
 
 
     const clearSearchInput = () => {

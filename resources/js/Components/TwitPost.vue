@@ -80,20 +80,21 @@
                 </li>
             </ul>
         </div>
-
-        <WhatsHappening v-show="isOpen" :tweetContent="tweet" :open="isOpen" placeholder="Post your reply!" class="
-        absolute
-        flex
-        items-center
-        justify-center
-        bg-gray-700 bg-opacity-50 
-        h-12
-        top-60"></WhatsHappening>
-
     </div>
     <div v-if="tweets.next_page_url" ref="scrollIndicator" class="text-center text-gray-400 my-4">
         Yüklənir...
     </div>
+
+    <WhatsHappening v-show="isOpen" :tweets="tweets.data.content" :isOpen="isOpen" placeholder="Post your reply!" class="
+        absolute
+        flex
+        items-center
+        justify-center
+        bg-gray-700 bg-opacity-100
+        h-12
+        top-60"></WhatsHappening>
+
+
 </template>
 
 

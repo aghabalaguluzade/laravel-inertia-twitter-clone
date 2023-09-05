@@ -1,7 +1,7 @@
 <template>
-    <!-- <div v-if="isOpen">
-        <p class="text-white">salam</p>
-    </div> -->
+    <div v-if="isOpen" v-for="tweet in tweets.data">
+        <p class="text-white">tweets</p>
+    </div>
     <div class="flex w-full items-start gap-2 px-4 py-1 border-b-[0.5px] border-lowWhite h-auto">
         <Link href="/" class="cursor-pointer py-1 h-auto">
             <img :src="user.profile_photo_path" class="w-[43px] rounded-full hover:brightness-90" alt="">
@@ -174,12 +174,14 @@
 
     const props = defineProps({
         placeholder : String,
-        tweet : Object,
+        tweets : Object,
         isOpen : Boolean
     });
 
-    const tweet = ref(props.tweet);
+    const tweets = ref(props.tweets);
     const isOpen = ref(props.isOpen);
+
+    console.log(tweets);
 
     const loading = ref(false);
     const tweetContent = ref(null);
