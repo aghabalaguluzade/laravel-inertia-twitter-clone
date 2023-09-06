@@ -119,31 +119,26 @@ class TweetsController extends Controller
 
     public function search(Request $request)
     {
-        $search = $request->input('search');
+        $search = preg_replace('/[+\-*><()~"@]/', '', trim(request('search')));
+        $search = htmlspecialchars($search, ENT_QUOTES, 'UTF-8');
 
-        // $users = User::query()
-        //     ->when($search, function($query) use ($search) {
-        //         $query->where('username', 'LIKE', '%' . $search . '%')
-        //             ->orWhere('name', 'LIKE', '%' . $search . '%');
-        //     })
-        //     // ->whereNot('id', auth()->user()->id)
-        //     ->orderBy('id', 'desc')
-        //     ->get();
+        if(!$search) {
+            return response()->json([]);
+        }
 
-        
+        $search .= '*';
+
         $users = User::query()
-        ->when(request('search'), function ($query, $search) {
-            $query->whereFullText(['username', 'name'], $search);
-        })
-        // ->whereNot('id', auth()->user()->id)
-        ->orderBy('id', 'desc') 
-        ->get();
+            ->selectRaw('id, username, name, profile_photo_path, MATCH(username, name) AGAINST(? IN BOOLEAN MODE) as score', [$search])
+            ->whereFullText(['username', 'name'], $search, ['mode' => 'boolean'])
+            ->orderByDesc('score')
+            ->limit(10)
+            ->get();
+        
 
-
-
-            if($request->wantsJson()) {
-                return $users;
-            };
+        if($request->wantsJson()) {
+            return $users;
+        };
 
         return Inertia::render('TwitSearch', [
             'users' => $users

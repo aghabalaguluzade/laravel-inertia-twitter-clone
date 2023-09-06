@@ -32,7 +32,7 @@
             
             <ul class="flex items-center w-full justify-start gap-10 py-3">
                     
-                    <li @click="clickRepy" class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
+                    <li @click="clickRepy(tweet.id)" class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
                         <span class="p-2 rounded-full group-hover:bg-hoverBlue transition duration-200">
                             <svg viewBox="0 0 24 24" class=" w-[20px]" aria-hidden="true">
                             <g>
@@ -85,18 +85,18 @@
         Yüklənir...
     </div>
 
-    <WhatsHappening v-show="isOpen" :tweets="tweets.data.content" :isOpen="isOpen" placeholder="Post your reply!" class="
+    <div v-show="isOpen" class="
         absolute
         flex
         items-center
         justify-center
         bg-gray-700 bg-opacity-100
         h-12
-        top-60"></WhatsHappening>
-
+        top-60">
+        <WhatsHappening :selectedTweet="selectedTweet" :isOpen="isOpen" placeholder="Post your reply!"></WhatsHappening>
+    </div>
 
 </template>
-
 
 
 <script setup>
@@ -111,12 +111,13 @@
     })
 
     const isOpen = ref(false);
-
-    const clickRepy = () => {
-        isOpen.value = !isOpen.value;
-    }
-
+    const selectedTweet = ref(null);
     const tweets = ref(props.tweets);
+
+    const clickRepy = (tweetId) => {
+        isOpen.value = !isOpen.value;
+        selectedTweet.value = tweets.value.find(tweet => tweet.id === tweetId);
+    }
 
     const formatDateString = (dateString) => {
         return format(new Date(dateString), 'MMM d')

@@ -1,7 +1,10 @@
 <template>
-    <div v-if="isOpen" v-for="tweet in tweets.data">
-        <p class="text-white">tweets</p>
+    <div v-if="isOpen">
+            <div v-for="tweet in selectedTweet" :key="tweet.id">
+                <p class="text-white">{{ tweet.content }}</p>
+            </div>
     </div>
+
     <div class="flex w-full items-start gap-2 px-4 py-1 border-b-[0.5px] border-lowWhite h-auto">
         <Link href="/" class="cursor-pointer py-1 h-auto">
             <img :src="user.profile_photo_path" class="w-[43px] rounded-full hover:brightness-90" alt="">
@@ -40,7 +43,6 @@
                                     class="cursor-pointer rounded-full px-2 py-1 hover:bg-lowWhite underline">Edit</span></div>
                            </div>
                         </div>
-
                     </a>
                 </span>
             </button>
@@ -174,15 +176,12 @@
 
     const props = defineProps({
         placeholder : String,
-        tweets : Object,
-        isOpen : Boolean
+        selectedTweet : Object,
+        isOpen : Boolean,
     });
 
-    const tweets = ref(props.tweets);
-    const isOpen = ref(props.isOpen);
-
-    console.log(tweets);
-
+    console.log(props.selectedTweet);
+    
     const loading = ref(false);
     const tweetContent = ref(null);
     const picker = ref(null);

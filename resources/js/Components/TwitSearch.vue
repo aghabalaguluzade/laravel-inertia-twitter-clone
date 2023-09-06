@@ -35,7 +35,7 @@
                     <span class="text-lg font-semibold text-gray-500">Following</span>
                 </div>
             </Link>
-            <div v-else class="text-white">Nəticə yoxdur...</div>
+            <!-- <div v-else class="text-white">Nəticə yoxdur...</div> -->
     </div>
     
 </template> 
