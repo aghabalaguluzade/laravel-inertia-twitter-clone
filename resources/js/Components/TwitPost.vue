@@ -32,7 +32,7 @@
             
             <ul class="flex items-center w-full justify-start gap-10 py-3">
                     
-                    <li @click="clickRepy(tweet.id)" class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
+                    <li @click="clickReply(tweet.id, tweet.content)" class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
                         <span class="p-2 rounded-full group-hover:bg-hoverBlue transition duration-200">
                             <svg viewBox="0 0 24 24" class=" w-[20px]" aria-hidden="true">
                             <g>
@@ -40,7 +40,7 @@
                             </g>
                             </svg>
                         </span>
-                        0
+                        {{ tweet.comments_count }}
                     </li>
 
                 <li class="flex items-center gap-1 group text-sm text-lowsWhite transition duration-200 fill-lowsWhite hover:fill-useGreen hover:text-useGreen cursor-pointer">
@@ -85,15 +85,8 @@
         Yüklənir...
     </div>
 
-    <div v-show="isOpen" class="
-        absolute
-        flex
-        items-center
-        justify-center
-        bg-gray-700 bg-opacity-100
-        h-12
-        top-60">
-        <WhatsHappening :selectedTweet="selectedTweet" :isOpen="isOpen" placeholder="Post your reply!"></WhatsHappening>
+    <div v-show="isOpen" class="absolute flex items-center justify-center bg-gray-700 bg-opacity-100 h-12 top-60">
+        <TwitReply :selectedTweet="selectedTweet" :isOpen="isOpen"></TwitReply>
     </div>
 
 </template>
@@ -104,19 +97,22 @@
     import { format } from 'date-fns';
     import axios from 'axios';
     import debounce from 'lodash/debounce';
-    import WhatsHappening from './WhatsHappening.vue';
+    import TwitReply from './TwitReply.vue';
 
     const props = defineProps({
         tweets: Object,
-    })
+    });
 
     const isOpen = ref(false);
-    const selectedTweet = ref(null);
+    const selectedTweet = ref({ id: '', content: '' });
     const tweets = ref(props.tweets);
 
-    const clickRepy = (tweetId) => {
+    const clickReply = (tweetId, tweetContent) => {
         isOpen.value = !isOpen.value;
-        selectedTweet.value = tweets.value.find(tweet => tweet.id === tweetId);
+        selectedTweet.value = {
+            id: tweetId,
+            content: tweetContent,
+        };
     }
 
     const formatDateString = (dateString) => {

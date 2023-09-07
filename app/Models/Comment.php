@@ -9,7 +9,13 @@ class Comment extends Model
 {
     use HasFactory;
 
-    public function tweets() {
+    protected $guarded = [];
+
+    public function tweet() {
         return $this->belongsTo(Tweet::class);
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

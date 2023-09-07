@@ -1,10 +1,23 @@
 <template>
-<div class="flex w-full items-start gap-2 px-4 py-1 border-b-[0.5px] border-lowWhite h-auto">
+<div class="flex w-full items-start gap-2 px-4 py-1 border-b-[0.5px] border-lowWhite h-auto" :class="{
+        'bg-gray-700' : isOpen,
+        'bg-opacity-100' : isOpen,
+        'max-w-[35rem]' : isOpen,
+        'lg:w-[35rem]' : isOpen,
+
+    }">
         <Link href="/" class="cursor-pointer py-1 h-auto">
             <img :src="user.profile_photo_path" class="w-[43px] rounded-full hover:brightness-90" alt="">
         </Link>
         <div class="w-full flex flex-col group py-1 ">
-            <form @submit.prevent="submit()">
+            <form @submit.prevent="submit(selectedTweet.id)">
+                <input type="hidden" name="tweet_id" :value="selectedTweet.id" />
+
+                <div v-if="isOpen">
+                    <p class="text-white mb-5">{{ selectedTweet.content }}</p>
+                </div>
+
+
             <button class="hover:bg-hoverGreen relative group  group-focus-within:flex cursor-pointer  transition duration-200 hidden gap-2 items-center text-useGreen text-[12px]  ml-2 py-[1px] px-[12px] rounded-l-full rounded-r-full border-[1px] border-lowsWhite ">
                 Everyone
                 <svg viewBox="0 0 24 24" class="w-[13px] fill-useGreen" aria-hidden="true">
@@ -40,7 +53,7 @@
                     </a>
                 </span>
             </button>
-            <textarea type="text" v-model="form.content" @input="resizeTextarea()" ref="tweetContent" name="content" :placeholder="placeholder"
+            <textarea type="text" v-model="form.body" @input="resizeTextarea()" ref="tweetContent" name="body" :placeholder="placeholder"
                    class="text-normalWhite bg-transparent text-lg outline-none resize-none overflow-hidden px-2 mt-2 w-full"></textarea>
                    
                     <div v-if="media.length" class="grid gap" :class="{ 'grid-cols-2' : media.length > 1 }">
@@ -56,7 +69,7 @@
                         </div>
                     </div>
 
-                   <div v-if="$page.props.errors.content" v-text="$page.props.errors.content" class="text-red-500 text-xs mt-1"></div>
+                   <div v-if="$page.props.errors.body" v-text="$page.props.errors.body" class="text-red-500 text-xs mt-1"></div>
             <div class="border-b-[1px] border-lowsWhite w-full mt-2 py-3 hidden group-focus-within:block">
                 <button class="flex gap-1 relative group hover:bg-hoverGreen transition duration-200 text-useGreen text-[13px] items-center px-2 rounded-l-full rounded-r-full">
                     <svg viewBox="0 0 24 24" aria-hidden="true" class="w-[13px] fill-useGreen">
@@ -164,27 +177,29 @@
     import { usePage, router } from "@inertiajs/vue3";
     import axios from 'axios';
 
-    const props = defineProps({
-        placeholder : String
-    });
-
     const page = usePage();
 
     const user = computed(() => page.props.auth.user);
+
+    const props = defineProps({
+        placeholder : String,
+        selectedTweet : Object,
+        isOpen : Boolean,
+    });
     
     const loading = ref(false);
     const tweetContent = ref(null);
     const picker = ref(null);
     const media = ref([]);
 
-
     const form = reactive({
-        content: '',
+        tweet_id : null,
+        body: '',
         mediaIds : []
     });
 
     const requiredCharacter = computed(() => {
-        return 280 - form.content.length;
+        return 280 - form.body.length;
     });
 
     const requiredCharacterValue = ref(requiredCharacter.value);
@@ -194,24 +209,26 @@
     });
 
     const canSubmit = computed(() => {
-        return form.content.length && requiredCharacterValue.value >= 0 && media.value.every(item => !item.loading);
+        return form.body.length && requiredCharacterValue.value >= 0 && media.value.every(item => !item.loading);
     });
 
-    const submit = () => {
-        form.mediaIds = media.value.map(item => item.id);
-        router.post('/tweets', form, { 
-            preserveState : true,
-            onStart : () => loading.value = true,
-            onFinish : () => loading.value = false,
-            onSuccess : () => {
-                if(Object.keys(page.props.errors).length === 0) {
-                    form.content = '';
-                    form.mediaIds = [];
-                    media.value = [];
+        const submit = (tweetId) => {
+            form.tweet_id = tweetId;
+            form.mediaIds = media.value.map(item => item.id);
+            router.post(`/tweets/${tweetId}/reply`, form, { 
+                preserveState : true,
+                onStart : () => loading.value = true,
+                onFinish : () => loading.value = false,
+                onSuccess : () => {
+                    if(Object.keys(page.props.errors).length === 0) {
+                        form.tweet_id = '',
+                        form.body = '';
+                        form.mediaIds = [];
+                        media.value = [];
+                    }
                 }
-            }
-        });
-    };
+            });
+        };
 
     const resizeTextarea = () => {
         const textarea = tweetContent.value;

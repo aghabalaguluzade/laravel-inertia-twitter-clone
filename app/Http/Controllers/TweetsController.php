@@ -24,7 +24,8 @@ class TweetsController extends Controller
                 'likes as liked' => function($q){
                     $q->where('user_id', auth()->id());
                 },
-                'tweet_view'
+                'tweet_view',
+                'comments'
             ])
             ->withCasts([
                 'liked' => 'boolean'
@@ -61,10 +62,12 @@ class TweetsController extends Controller
     }
 
     public function show(User $user,Tweet $tweet, Request $request) {
+        $comments = $tweet->comments()->with('user')->latest()->get();
         $tweetStats = [
             'likes_count' => $tweet->likes()->count(),
             'liked' => $tweet->likes()->where('user_id', auth()->id())->exists(),
             'tweet_view_count' => $tweet->tweet_view()->count(),
+            'comments_count' => $tweet->comments()->count(),
         ];
 
         if (!Cookie::has('viewed_posts')) {
@@ -89,13 +92,14 @@ class TweetsController extends Controller
         return Inertia::render('detail', [
             'tweet' => $tweet->load('user'),
             'tweetStats' => $tweetStats,
+            'comments' => $comments,
         ]);
     }
 
     public function store(Request $request) {
 
         $request->validate([
-            'content' => ['required','max:270'],
+            'content' => ['required','max:280'],
             'mediaIds.*' => [
                 Rule::exists('media', 'id')
                     ->where(function($q) use ($request) {

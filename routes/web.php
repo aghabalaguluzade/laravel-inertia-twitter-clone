@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\LikedTweetsController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\TweetCommentsController;
 use App\Http\Controllers\TweetsController;
 use App\Http\Controllers\UserFollowController;
 use App\Http\Controllers\UserNotificationsController;
@@ -39,9 +40,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/{user:username}', [TweetsController::class, 'users']);
     Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
     Route::post('/tweets/{tweet:id}/like', [LikedTweetsController::class, 'toogle'])->name('toogle');
-    Route::post('/tweets/{tweet:id}/reply', [TweetsController::class, 'reply'])->name('reply');
-    Route::post('/tweets/{tweet:id}/retweet', [TweetsController::class, 'retweet'])->name('retweet');
-    Route::post('/tweets/{tweet:id}/quote', [TweetsController::class, 'quote'])->name('quote');
+    Route::post('/tweets/{tweet:id}/reply', [TweetCommentsController::class, 'reply'])->name('reply');
+    Route::post('/tweets/{tweet:id}/retweet', [TweetCommentsController::class, 'retweet'])->name('retweet');
+    Route::post('/tweets/{tweet:id}/quote', [TweetCommentsController::class, 'quote'])->name('quote');
     Route::post('/tweets/{tweet:id}/delete', [TweetsController::class, 'destroy'])->name('delete');
 });
 
