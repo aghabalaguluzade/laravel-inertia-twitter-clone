@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         $aghabala->followers()->attach(User::factory(100)->create()->pluck('id'));
         $aghabala->followings()->attach(User::factory(100)->create()->pluck('id'));
 
-        User::factory(3000)->create();
-        Tweet::factory(10000)->create();
+        User::factory(1000)->create();
+        Tweet::factory(100000)->create();
     }
 }

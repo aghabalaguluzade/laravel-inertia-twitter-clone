@@ -1,12 +1,22 @@
 <template>
-    <div v-for="tweet in tweets.data" :key="tweet.id" class="flex w-full h-auto cursor-pointer hover:bg-lowWhite" :class="{ 'bg-opacity-50' : isOpen }">
+
+<RecycleScroller   
+    class="scroller text-white flex w-full h-auto"
+    :items="tweets.data"
+    :item-size="140"
+    key-field="id"
+    v-slot="{ item }"
+  >
+
+  <div class="flex w-full h-auto cursor-pointer hover:bg-lowWhite" :class="{ 'bg-opacity-50' : isOpen }">
+  <!-- <div v-for="tweet in tweets.data" :key="tweet.id" class="flex w-full h-auto cursor-pointer hover:bg-lowWhite" :class="{ 'bg-opacity-50' : isOpen }"> -->
         <div class="p-3">
-            <img :src="tweet.user.profile_photo_path" class="w-[45px] rounded-full" :alt="tweet.user.name" />
+            <img :src="item.user.profile_photo_path" class="w-[45px] rounded-full" :alt="item.user.name" />
         </div>
         <div class="w-full">
             <div class="text-sm px-2 flex  items-center justify-start gap-2 text-normalWhite mt-2">
-                <h3 class="font-bold hover:underline"><Link :href="tweet.user.username">{{ tweet.user.name }}</Link></h3>
-                <span class="text-lowsWhite font-light flex-grow"><Link :href="tweet.user.username">@{{ tweet.user.username }}</Link> · {{ formatDateString(tweet.created_at) }}</span>
+                <h3 class="font-bold hover:underline"><Link :href="item.user.username">{{ item.user.name }}</Link></h3>
+                <span class="text-lowsWhite font-light flex-grow"><Link :href="item.user.username">@{{ item.user.username }}</Link> · {{ formatDateString(item.created_at) }}</span>
                 <span>
                 <svg viewBox="0 0 24 24"
                      class="w-[30px] cursor-pointer rounded-full p-2 fill-lowsWhite  hover:fill-tickBlue  hover:bg-hoverBlue z-100 transition duration-200"
@@ -18,21 +28,21 @@
             </span>
             </div>
             
-            <Link :href="tweetLink(tweet.user.username, tweet.id)">
+            <Link :href="tweetLink(item.user.username, item.id)">
                 <div class="text-sm text-normalWhite">
-                    {{ tweet.content }}
+                    {{ item.content }}
                 </div>
             </Link>
 
-            <div v-if="tweet.media">
-                <div v-for="(item, index) in tweet.media" :key="index" class="pr-3 mt-2">
+            <div v-if="item.media">
+                <div v-for="(item, index) in item.media" :key="index" class="pr-3 mt-2">
                     <img :src="item.full_url" class="object-cover border-[1px] border-lowsWhite rounded-lg" alt="post image">
                 </div>
             </div>
             
             <ul class="flex items-center w-full justify-start gap-10 py-3">
                     
-                    <li @click="clickReply(tweet.id, tweet.content)" class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
+                    <li @click="clickReply(item.id, item.content)" class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
                         <span class="p-2 rounded-full group-hover:bg-hoverBlue transition duration-200">
                             <svg viewBox="0 0 24 24" class=" w-[20px]" aria-hidden="true">
                             <g>
@@ -40,7 +50,7 @@
                             </g>
                             </svg>
                         </span>
-                        {{ tweet.comments_count }}
+                        {{ item.comments_count }}
                     </li>
 
                 <li class="flex items-center gap-1 group text-sm text-lowsWhite transition duration-200 fill-lowsWhite hover:fill-useGreen hover:text-useGreen cursor-pointer">
@@ -53,11 +63,11 @@
                     </span>
                     17
                 </li>
-                <li class="flex items-center gap-1 group text-sm text-lowsWhite transition duration-200 fill-lowsWhite  hover:fill-myPink hover:text-myPink cursor-pointer" :class="{ 'fill-myPink' : tweet.liked  }">
-                    <Link preserve-scroll method="POST" as="button" :href="`/tweets/${tweet.id}/like`"> 
+                <li class="flex items-center gap-1 group text-sm text-lowsWhite transition duration-200 fill-lowsWhite  hover:fill-myPink hover:text-myPink cursor-pointer" :class="{ 'fill-myPink' : item.liked  }">
+                    <Link preserve-scroll method="POST" as="button" :href="`/tweets/${item.id}/like`"> 
                         <TwitLike></TwitLike>
                     </Link>   
-                    {{ tweet.likes_count }}
+                    {{ item.likes_count }}
                 </li>                    
                 <li class="flex items-center group gap-1 text-sm text-lowsWhite transition duration-200 fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
                     <span class="p-2 rounded-full group-hover:bg-hoverBlue transition duration-200">
@@ -67,7 +77,7 @@
                             </g>
                         </svg>
                     </span>
-                    {{ tweet.tweet_view_count ?? 0 }}
+                    {{ item.tweet_view_count ?? 0 }}
                 </li>
                 <li class="flex items-center group gap-1 text-sm text-lowsWhite transition duration-200 fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
                     <span class="p-2 rounded-full group-hover:bg-hoverBlue transition duration-200">
@@ -81,6 +91,9 @@
             </ul>
         </div>
     </div>
+
+    </RecycleScroller>
+
     <div v-if="tweets.next_page_url" ref="scrollIndicator" class="text-center text-gray-400 my-4">
         Yüklənir...
     </div>
@@ -91,6 +104,20 @@
 
 </template>
 
+<style scoped>
+.scroller {
+  height: 100%;
+}
+
+.user {
+  height: 32%;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+}
+
+
+</style>
 
 <script setup>
     import { defineProps, onMounted, onUnmounted, ref, watch } from 'vue';
