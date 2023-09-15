@@ -27,7 +27,7 @@ Route::post('login', [LoginController::class, 'store']);
 Route::middleware(['auth'])->group(function () {
     Route::get('/notifications', [UserNotificationsController::class, 'index']);
     Route::get('/', [TweetsController::class, 'index']);
-    Route::get('/{user:username}/status/{tweet:id}', [TweetsController::class, 'show']);
+    Route::get('/{user:username}/status/{tweet:id}', [TweetsController::class, 'show'])->name('tweet.show');
     Route::post('/tweets', [TweetsController::class, 'store']);
     Route::get('/search', [TweetsController::class, 'search']);
     Route::post('/media', [MediaController::class, 'store']);

@@ -17,13 +17,18 @@
                 </svg>
             </span>
             </div>
-            <div class="text-sm text-normalWhite">
-                {{ comment.body }}
-            </div>
+
+            <Link :href="tweetLink(comment.user.username, comment.tweet_id)">
+                <div class="text-sm text-normalWhite">
+                    {{ comment.body }}
+                </div>
+            </Link>
+
             <div class="pr-3 mt-2">
             </div>
             <ul class="flex items-center w-full justify-start gap-10 py-3">
-                <li class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
+
+                <li @click="clickReply(comment.id, comment.body, comment.user.profile_photo_path)" class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
                     <span class="p-2 rounded-full group-hover:bg-hoverBlue transition duration-200">
                         <svg viewBox="0 0 24 24" class=" w-[20px]" aria-hidden="true">
                         <g>
@@ -31,7 +36,7 @@
                         </g>
                         </svg>
                     </span>
-                    0
+                    {{ tweetStats.comments_count }}
                 </li>
                 <li class="flex items-center gap-1 group text-sm text-lowsWhite transition duration-200 fill-lowsWhite hover:fill-useGreen hover:text-useGreen cursor-pointer">
                     <span class="p-2 rounded-full group-hover:bg-hoverGreen transition duration-200">
@@ -70,7 +75,13 @@
                 </li>
             </ul>
         </div>
+
+        <div v-show="isOpen" class="absolute flex items-center justify-center bg-gray-700 bg-opacity-100 h-12 top-60">
+            <TwitReply :selectedTweet="selectedTweet" :isOpen="isOpen"></TwitReply>
+        </div>
+
     </div>
+    
 </template>
 
 
@@ -78,21 +89,34 @@
 <script setup>
     import { defineProps, ref } from 'vue';
     import { format } from 'date-fns';
+    import TwitReply from './TwitReply.vue';
 
     const props = defineProps({
-        comments: Array,
+        comments: Object,
         tweetStats: Object,
     });
 
+    
     const comments = ref(props.comments);
     const tweetStats = ref(props.tweetStats);
-
-    for(let i = 0; i < props.comments.length; i++) {
-        console.log(props.comments[i].user.name);
-    }
-
+    const isOpen = ref(false);
+    const selectedTweet = ref({ id: '', content: '' });
+        
     const formatDateString = (dateString) => {
         return format(new Date(dateString), 'MMM d')
     }
+
+    const clickReply = (tweetId, tweetContent, tweetImg) => {
+        isOpen.value = !isOpen.value;
+        selectedTweet.value = {
+            id: tweetId,
+            content: tweetContent,
+            profile_photo_path : tweetImg
+        };
+    }
+
+    const tweetLink = (user,tweet) => {
+        return `/${user}/status/${tweet}`
+    };
 
 </script>

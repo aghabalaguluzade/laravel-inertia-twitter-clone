@@ -12,8 +12,6 @@ import TrendsForYou from "./Components/TrendsForYou.vue"
 import WhoToFollow from "./Components/WhoToFollow.vue"
 import TwitPost from "./Components/TwitPost.vue"
 import { usePage } from "@inertiajs/vue3";
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import VueVirtualScroller from 'vue-virtual-scroller'
 import { computed, ref } from "vue";
 
 const page = usePage();
@@ -40,7 +38,6 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) });
         app.use(plugin);
-        app.use(VueVirtualScroller);
         app.provide('user', user);
         app.component('Link', Link);
         app.component('Head', Head);

@@ -16,9 +16,10 @@ class TweetsController extends Controller
     public function index(Request $request) {
 
        $tweets = Tweet::where(function($q) {
-                $q->where('user_id', auth()->id())
-                    ->orWhereIn('user_id', auth()->user()->followings->pluck('id'));
+                // $q->where('user_id', auth()->id())
+                //     ->orWhereIn('user_id', auth()->user()->followings->pluck('id'));
             })
+            ->where('user_id', '!=', auth()->id())
             ->withCount([
                 'likes',
                 'likes as liked' => function($q){
@@ -31,6 +32,7 @@ class TweetsController extends Controller
                 'liked' => 'boolean'
             ])
             ->with(['user', 'media'])
+            // ->inRandomOrder()
             ->latest()
             ->paginate(); 
 
@@ -133,6 +135,7 @@ class TweetsController extends Controller
         $search .= '*';
 
         $users = User::query()
+            // ->where('id', '!=', auth()->id())
             ->selectRaw('id, username, name, profile_photo_path, MATCH(username, name) AGAINST(? IN BOOLEAN MODE) as score', [$search])
             ->whereFullText(['username', 'name'], $search, ['mode' => 'boolean'])
             ->orderByDesc('score')

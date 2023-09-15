@@ -41,6 +41,7 @@ class LoginController extends Controller
 
         $tweets = Tweet::where('user_id', auth()->id())
             ->with('user')
+            ->withCount(['comments'])
             ->latest()
             ->paginate();
 

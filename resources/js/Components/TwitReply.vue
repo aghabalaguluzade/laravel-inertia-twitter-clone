@@ -7,7 +7,7 @@
 
     }">
         <Link href="/" class="cursor-pointer py-1 h-auto">
-            <img :src="user.profile_photo_path" class="w-[43px] rounded-full hover:brightness-90" alt="">
+            <img :src="selectedTweet.profile_photo_path" class="w-[43px] rounded-full hover:brightness-90" alt="">
         </Link>
         <div class="w-full flex flex-col group py-1 ">
             <form @submit.prevent="submit(selectedTweet.id)">
