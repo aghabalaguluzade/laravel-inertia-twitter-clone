@@ -64,18 +64,15 @@
 
 
 <script setup>
-    import { ref } from "vue";
     import { inject } from 'vue';
     import { usePage } from "@inertiajs/vue3";
 
     const props = defineProps({
         user : Object,
-        tweets: Object,
-    })
+        tweets: Object
+    });
 
     const page = usePage();
-
-    let tweets = ref(props.tweets);
 
     const user = inject('user');
 

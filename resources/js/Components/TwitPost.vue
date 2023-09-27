@@ -27,10 +27,10 @@
 
             <div v-if="tweet.media">
                 <div v-for="(item, index) in tweet.media" :key="index" class="pr-3 mt-2">
-                    <img :src="item.full_url" class="object-cover border-[1px] border-lowsWhite rounded-lg" alt="post image">
+                    <img :src="item.full_url" class="object-cover border-[1px] border-lowsWhite rounded-lg" alt="post image" />
                 </div>
             </div>
-            
+
             <ul class="flex items-center w-full justify-start gap-10 py-3">
                     
                     <li @click="clickReply(tweet.id, tweet.content, tweet.user.profile_photo_path)" class="flex items-center gap-1 text-sm text-lowsWhite transition duration-200 group fill-lowsWhite hover:fill-tickBlue hover:text-tickBlue cursor-pointer">
@@ -45,13 +45,33 @@
                     </li>
 
                 <li class="flex items-center gap-1 group text-sm text-lowsWhite transition duration-200 fill-lowsWhite hover:fill-useGreen hover:text-useGreen cursor-pointer">
-                    <span class="p-2 rounded-full group-hover:bg-hoverGreen transition duration-200">
+                   
+
+                    <div tabindex="10"
+                         class="cursor-pointer relative group rounded-full p-2 fill-lowsWhite hover:fill-tickBlue  hover:bg-hoverBlue transition duration-200">
                         <svg viewBox="0 0 24 24" class=" w-[20px]" aria-hidden="true">
                             <g>
                                 <path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path>
                             </g>
                         </svg>
-                    </span>
+                        <div class="absolute  opacity-0 shadow-[rgba(222,222,222,0.6)] shadow-[0_0_7px_0] overflow-hidden text-normalWhite rounded-xl text-sm w-64 bg-black z-100 pointer-events-none group-focus:opacity-100 group-focus:pointer-events-auto -bottom-10 transition duration-200 right-0">
+                            <div class="flex flex-col">
+                                <span @click="" class="py-3 px-2 flex items-center gap-2 hover:bg-lowWhite cursor-pointer">
+                                    <svg viewBox="0 0 24 24" class=" w-[20px]" aria-hidden="true">
+                                        <g>
+                                            <path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path>
+                                        </g>
+                                    </svg>
+                                  Repost
+                                </span>
+                                <span class="py-3 px-2 flex items-center gap-2 hover:bg-lowWhite cursor-pointer">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true" class="w-[20px] r-1nao33i r-4qtqp9 r-yyyyoo r-1q142lx r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"><g><path d="M14.23 2.854c.98-.977 2.56-.977 3.54 0l3.38 3.378c.97.977.97 2.559 0 3.536L9.91 21H3v-6.914L14.23 2.854zm2.12 1.414c-.19-.195-.51-.195-.7 0L5 14.914V19h4.09L19.73 8.354c.2-.196.2-.512 0-.708l-3.38-3.378zM14.75 19l-2 2H21v-2h-6.25z"></path></g></svg>
+                                    Quote
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
                     17
                 </li>
                 <li class="flex items-center gap-1 group text-sm text-lowsWhite transition duration-200 fill-lowsWhite  hover:fill-myPink hover:text-myPink cursor-pointer" :class="{ 'fill-myPink' : tweet.liked  }">
@@ -99,9 +119,10 @@
     import axios from 'axios';
     import debounce from 'lodash/debounce';
     import TwitReply from './TwitReply.vue';
-
+    
     const props = defineProps({
         tweets: Object,
+        images : Object
     });
 
     const isOpen = ref(false);

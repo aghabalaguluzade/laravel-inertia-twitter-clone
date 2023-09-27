@@ -38,4 +38,8 @@ class Tweet extends Model
         return $this->hasMany(Comment::class);
     }
 
+    public function repostedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'repost', 'tweet_id', 'user_id');
+    }
 }

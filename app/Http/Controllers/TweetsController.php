@@ -48,7 +48,7 @@ class TweetsController extends Controller
     public function users(Request $request, User $user) {
 
         $tweets = $user->tweets()
-            ->with('user')
+            ->with(['user', 'media'])
             ->latest()
             ->paginate();
 
@@ -118,8 +118,8 @@ class TweetsController extends Controller
         ]);
 
         Media::find($request->input('mediaIds'))->each->update([
-            'model_id' => $tweet->id,
-            'model_type' => Tweet::class,
+            'mediaable_id' => $tweet->id,
+            'mediaable_type' => Tweet::class,
         ]);
 
         return redirect()->back();

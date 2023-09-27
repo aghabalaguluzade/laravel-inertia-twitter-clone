@@ -28,8 +28,8 @@
           </div>
             <span class="flex gap-2 items-center text-lowsWhite text-[13px]"><svg viewBox="0 0 24 24" aria-hidden="true" class="w-5 fill-lowsWhite"><g><path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"></path></g></svg> Joined {{ formatDateString(user.created_at) }}</span>
             <div class="flex items-center gap-4">
-                <span class="flex text-lowsWhite text-[12px] gap-2 cursor-pointer hover:underline"> <b class="text-normalWhite">  {{ following_count }} </b>   Following</span>
-                <span class="flex text-lowsWhite text-[12px] gap-2 cursor-pointer hover:underline underline-normalWhite"> <b class="text-normalWhite">  {{ followers_count }} </b>   Followers</span>
+                <span class="flex text-lowsWhite text-[12px] gap-2 cursor-pointer hover:underline"> <b class="text-normalWhite">  {{ following_count }} </b>   <Link :href="`${user.username}/following`">Following</Link></span>
+                <span class="flex text-lowsWhite text-[12px] gap-2 cursor-pointer hover:underline underline-normalWhite"> <b class="text-normalWhite">  {{ followers_count }} </b>   <Link :href="`${user.username}/followers  `">Followers</Link></span>
             </div>
         </div>
         <div class="w-full h-[48px] mt-2 bg-transparent text-normalWhite mr-auto border-b-[0.5px] border-useGray backdrop-blur-sm">

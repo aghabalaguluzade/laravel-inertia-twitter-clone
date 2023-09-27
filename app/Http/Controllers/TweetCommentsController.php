@@ -33,8 +33,8 @@ class TweetCommentsController extends Controller
             ]);
     
             Media::find($request->input('mediaIds'))->each->update([
-                'model_id' => $comment->id,
-                'model_type' => Tweet::class,
+                'mediaable_id' => $comment->id,
+                'mediaable_type' => Tweet::class,
             ]);
     
             return redirect()->back();
