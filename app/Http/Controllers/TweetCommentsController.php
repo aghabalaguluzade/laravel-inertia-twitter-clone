@@ -29,7 +29,7 @@ class TweetCommentsController extends Controller
             $comment = Comment::create([
                 'user_id' => auth()->id(),
                 'tweet_id' => $request->input('tweet_id'),
-                'body' => $request->input('body'),
+                'body' => $request->input('body'),  
             ]);
     
             Media::find($request->input('mediaIds'))->each->update([
@@ -39,7 +39,6 @@ class TweetCommentsController extends Controller
     
             return redirect()->back();
         } catch (\Throwable $th) {
-            // dd($th->getMessage());
             return false;
         }
 

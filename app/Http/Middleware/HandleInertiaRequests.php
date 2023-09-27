@@ -42,6 +42,8 @@ class HandleInertiaRequests extends Middleware
                 : null,
             'unreadNotifications' => $request->user()?->unreadNotifications?->count(),
             'twit_count' => $request->user()?->tweets?->count(),
+            'followers_count' => $request->user()?->followers()->count(),
+            'following_count' => $request->user()?->followings()->count(),
         ]);
     }
 }

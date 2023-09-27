@@ -21,7 +21,7 @@
             <Link :href="tweetLink(comment.user.username, comment.tweet_id)">
                 <div class="text-sm text-normalWhite">
                     {{ comment.body }}
-                </div>
+                </div>  
             </Link>
 
             <div class="pr-3 mt-2">

@@ -60,6 +60,8 @@ class TweetsController extends Controller
             'user' => $user,
             'tweets' => $tweets,
             'tweets_count' => $user->tweets()->count(),
+            'followers_count' => $user->followers()->count(),
+            'following_count' => $user->followings()->count(),
         ]);
     }
 
