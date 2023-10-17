@@ -13,7 +13,7 @@
 
         <TwitDetail :tweet="$page.props.tweet" :tweetStats="$page.props.tweetStats" />
         <WhatsHappening placeholder="Post your reply!" />
-        <TwitComments :comments="$page.props.comments" :tweetStats="$page.props.tweetStats" />
+        <TwitReplyComments :comments="$page.props.comments" :tweetStats="$page.props.tweetStats" />
     </div>
     <aside class="2xl:w-5/12 xl:w-5/12 lg:w-5/12 sm:w-5/12 min-h-screen border-l-[0.5px] border-useGray relative flex flex-col justify-start gap-2 items-center px-5">
         <TwitSearch />
@@ -37,6 +37,6 @@
 </template>
 
 <script setup>
-    import TwitComments from "../Components/TwitComments.vue";
     import TwitDetail from "../Components/TwitDetail.vue"
+    import TwitReplyComments from "../Components/TwitReplyComments.vue";
 </script>

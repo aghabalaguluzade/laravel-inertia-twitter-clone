@@ -38,6 +38,7 @@ class TweetCommentsController extends Controller
             ]);
     
             return redirect()->back();
+            
         } catch (\Throwable $th) {
             return false;
         }

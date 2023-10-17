@@ -212,8 +212,8 @@
         return form.body.length && requiredCharacterValue.value >= 0 && media.value.every(item => !item.loading);
     });
 
-        const submit = (tweetId) => {
-            form.tweet_id = tweetId;
+    const submit = (tweetId) => {
+        form.tweet_id = tweetId;
             form.mediaIds = media.value.map(item => item.id);
             router.post(`/tweets/${tweetId}/reply`, form, { 
                 preserveState : true,
@@ -226,9 +226,9 @@
                         form.mediaIds = [];
                         media.value = [];
                     }
-                }
-            });
-        };
+            }
+        });
+    };
 
     const resizeTextarea = () => {
         const textarea = tweetContent.value;
